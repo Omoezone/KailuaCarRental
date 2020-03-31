@@ -16,31 +16,39 @@ public class Car {
     private String regi_date;
     private String odometer;
 
-
-    //Car Constructor
-    public Car(String brand, String model, String fuel_type, String regiNmbr, String regi_date, String odometer){
+    // Car Constructor
+    public Car(String reg_number, String type, String brand, String model, boolean cruise_control, boolean autogear, int horse_power, String seat_material, int seat_number, boolean ac, int ccm, String fuel_type, String regi_date, String odometer) {
+        this.reg_number = reg_number;
+        this.type = type;
         this.brand = brand;
         this.model = model;
+        this.cruise_control = cruise_control;
+        this.autogear = autogear;
+        this.horse_power = horse_power;
+        this.seat_material = seat_material;
+        this.seat_number = seat_number;
+        this.ac = ac;
+        this.ccm = ccm;
         this.fuel_type = fuel_type;
-        this.reg_number = regiNmbr;
         this.regi_date = regi_date;
         this.odometer = odometer;
     }
-    //to file method
+
+    // to file method
     public String toFile(){
         return (brand+","+ model+","+ fuel_type +","+ reg_number+","+ ac+","+ odometer);
     }
-    //to array method
+
+    // to array method
     public String[] toArray(){
         String[] carObj ={brand, model, fuel_type, reg_number, regi_date, odometer};
         return carObj;
     }
-    //toString
-    public String toString(){
-        return("Brand: "+brand+"\nModel: "+model+"\nType of fuel: "+ fuel_type +"\nRegistration number: "+reg_number+"\nRegistration Y/M: "+regi_date+"\nOdometer: "+odometer+"\nGear Man/Auto: "+getGearType());
-    }
 
-    //getters
+    // toString
+    public String toString() { return("Brand: "+brand+"\nModel: "+model+"\nType of fuel: "+ fuel_type +"\nRegistration number: "+reg_number+"\nRegistration Y/M: "+regi_date+"\nOdometer: "+odometer+"\nGear Man/Auto: "+getGearType()); }
+
+    // getters
     public String getBrand(){
         return brand;
     }
@@ -63,7 +71,7 @@ public class Car {
         return "Manual";
     }
 
-    //Setters
+    // setters
     public void setBrand(String brand){
         this.brand=brand;
     }
