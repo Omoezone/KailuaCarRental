@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class Menu {
 
     public static void interactionMenu(){
+        Scanner console = new Scanner(System.in);
         //loops while user inputs y
         boolean mainMenu = true;
         while(mainMenu == true) {
