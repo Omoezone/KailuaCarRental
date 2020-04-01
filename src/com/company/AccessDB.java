@@ -42,10 +42,12 @@ public class AccessDB{
             // if the resultset is not empty, we position to first row and display first field
             if (rs != null)
                 while (rs.next()) {
+
                     //System.out.println("Data from name: " + rs.getString("vendor_name") +
                     //      "        " + rs.getString("vendor_city"));
                     System.out.printf("Data from name: %-10s ",rs.getString("car_reg_number"));
-                    System.out.printf("%s\n ",rs.getString("car_model"));
+                    System.out.printf("Car model: %s\n ",rs.getString("car_model"));
+
                 }
             s.close();
             con.close();
