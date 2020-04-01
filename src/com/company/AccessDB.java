@@ -30,11 +30,11 @@ public class AccessDB{
            */
 
             // in the url we have to tell which account and password to use
-            con =  DriverManager.getConnection(DATABASE_URL,"root","X7913bz1h11"); //DriverManager Class fra linje 186
+            con =  DriverManager.getConnection(DATABASE_URL,"root","hoPPElort97!#"); //DriverManager Class fra linje 186
 
             //*** now that the connection is established we do the query
             s = con.createStatement(); //Connection interface linje 105.
-
+            s.executeUpdate("INSERT INTO cars VALUES ('BC27389','Family','Renault','Laguna',1,0,150,'leather',5,1,2900,'Disel','2010-12-31',1000 )");
             ResultSet rs = s.executeQuery("SELECT car_reg_number, car_model from cars");
             // ExceuteQuery er en metode i interfacet 'Statement' Se linje 69 i 'Statement'
             // Bliver initialiseret som "rs" der er en del af interfaces 'ResultSet'
@@ -42,10 +42,12 @@ public class AccessDB{
             // if the resultset is not empty, we position to first row and display first field
             if (rs != null)
                 while (rs.next()) {
-//                    System.out.println("Data from name: " + rs.getString("vendor_name") +
-//                          "        " + rs.getString("vendor_city"));
+
+                    //System.out.println("Data from name: " + rs.getString("vendor_name") +
+                    //      "        " + rs.getString("vendor_city"));
                     System.out.printf("Data from name: %-10s ",rs.getString("car_reg_number"));
                     System.out.printf("Car model: %s\n ",rs.getString("car_model"));
+
                 }
             s.close();
             con.close();
