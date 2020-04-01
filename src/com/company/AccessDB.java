@@ -1,15 +1,19 @@
 package com.company;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import java.sql.Connection; //Interface
+import java.sql.DriverManager; //Class
+import java.sql.ResultSet; //Interface
+import java.sql.SQLException; //Exception File (lyn market fil)
+import java.sql.Statement; //Interface
+/*
+! Alle disse imports og deres tilhørende klasser, findes i library der hedder java.sql i library
+! Tror at det man behøver at tilføje, er til mySQL, som vi allerede gjorde, da vi installede mySQL.
+! Dette er bare ikke forklaret særlig godt i powerpoint filen.
+*/
 public class AccessDB{
 
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DATABASE_URL = "jdbc:mysql://localhost:3306/ap";
-    static Connection con;
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; // info: https://en.wikipedia.org/wiki/JDBC_driver
+    static final String DATABASE_URL = "jdbc:mysql://localhost:3306/kailua";
+    static Connection con; //Skaber en instance af den IKKE statiske interface Connection
     /**   we want to use JDBC protocol, mysql DBMS , the local host with
      the database ap */
 
@@ -19,19 +23,21 @@ public class AccessDB{
             //***  Establishing the connection
             con = null;
             Statement s = null;
-            Class.forName (JDBC_DRIVER);
+            Class.forName (JDBC_DRIVER); //https://www.geeksforgeeks.org/class-forname-method-in-java-with-examples/
           /*Class and the forName() is a static method of the java. lang. Class .
           The JDBC Drivers (String) will be loaded into the class dynamically at run time and forName method contains static block
           which creates the Driver class object and register with the DriverManager Service automatically
            */
 
             // in the url we have to tell which account and password to use
-            con =  DriverManager.getConnection(DATABASE_URL,"root","Sabumnim22");
+            con =  DriverManager.getConnection(DATABASE_URL,"root","Weatcoast12"); //DriverManager Class fra linje 186
 
             //*** now that the connection is established we do the query
-            s = con.createStatement();
+            s = con.createStatement(); //Connection interface linje 105.
 
             ResultSet rs = s.executeQuery("SELECT vendor_name,  vendor_city  from vendors where default_account_number > '500'");
+            // ExceuteQuery er en metode i interfacet 'Statement' Se linje 69 i 'Statement'
+            // Bliver initialiseret som "rs" der er en del af interfaces 'ResultSet'
 
             // if the resultset is not empty, we position to first row and display first field
             if (rs != null)
