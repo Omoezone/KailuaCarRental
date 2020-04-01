@@ -30,12 +30,12 @@ public class AccessDB{
            */
 
             // in the url we have to tell which account and password to use
-            con =  DriverManager.getConnection(DATABASE_URL,"root","Weatcoast12"); //DriverManager Class fra linje 186
+            con =  DriverManager.getConnection(DATABASE_URL,"root","password"); //DriverManager Class fra linje 186
 
             //*** now that the connection is established we do the query
             s = con.createStatement(); //Connection interface linje 105.
 
-            ResultSet rs = s.executeQuery("SELECT vendor_name,  vendor_city  from vendors where default_account_number > '500'");
+            ResultSet rs = s.executeQuery("SELECT car_reg_number, car_model from cars");
             // ExceuteQuery er en metode i interfacet 'Statement' Se linje 69 i 'Statement'
             // Bliver initialiseret som "rs" der er en del af interfaces 'ResultSet'
 
@@ -44,8 +44,8 @@ public class AccessDB{
                 while (rs.next()) {
                     //System.out.println("Data from name: " + rs.getString("vendor_name") +
                     //      "        " + rs.getString("vendor_city"));
-                    System.out.printf("Data from name: %-34s ",rs.getString("vendor_name"));
-                    System.out.printf("%s\n ",rs.getString("vendor_city"));
+                    System.out.printf("Data from name: %-34s ",rs.getString("car_reg_number"));
+                    System.out.printf("%s\n ",rs.getString("car_model"));
                 }
             s.close();
             con.close();
