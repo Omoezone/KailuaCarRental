@@ -30,7 +30,7 @@ public class AccessDB{
            */
 
             // in the url we have to tell which account and password to use
-            con =  DriverManager.getConnection(DATABASE_URL,"root","password"); //DriverManager Class fra linje 186
+            con =  DriverManager.getConnection(DATABASE_URL,"root","X7913bz1h11"); //DriverManager Class fra linje 186
 
             //*** now that the connection is established we do the query
             s = con.createStatement(); //Connection interface linje 105.
@@ -42,10 +42,10 @@ public class AccessDB{
             // if the resultset is not empty, we position to first row and display first field
             if (rs != null)
                 while (rs.next()) {
-                    //System.out.println("Data from name: " + rs.getString("vendor_name") +
-                    //      "        " + rs.getString("vendor_city"));
-                    System.out.printf("Data from name: %-34s ",rs.getString("car_reg_number"));
-                    System.out.printf("%s\n ",rs.getString("car_model"));
+//                    System.out.println("Data from name: " + rs.getString("vendor_name") +
+//                          "        " + rs.getString("vendor_city"));
+                    System.out.printf("Data from name: %-10s ",rs.getString("car_reg_number"));
+                    System.out.printf("Car model: %s\n ",rs.getString("car_model"));
                 }
             s.close();
             con.close();
