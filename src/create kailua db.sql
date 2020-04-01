@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS kailua;
+/*DROP DATABASE IF EXISTS kailua;
 
 CREATE DATABASE kailua;
 
@@ -77,4 +77,6 @@ INSERT INTO cars VALUES
 	('AT28938','Sport','Porsche','911 2017',1,0,370,'leather',2,1,4921,'benzin','2020-03-30',0);
     
 INSERT INTO contracts VALUES
-	(1,1,'2020-04-14','2020-03-31',4000,'AT28938');
+	(1,1,'2020-04-14','2020-03-31',4000,'AT28938');*/
+    
+SET GLOBAL time_zone = '+1:00';
