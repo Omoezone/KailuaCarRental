@@ -30,12 +30,13 @@ public class AccessDB{
            */
 
             // in the url we have to tell which account and password to use
-            con =  DriverManager.getConnection(DATABASE_URL,"root","hoPPElort97!#"); //DriverManager Class fra linje 186
+            con =  DriverManager.getConnection(DATABASE_URL,"root","Ecology15110515"); //DriverManager Class fra linje 186
 
             //*** now that the connection is established we do the query
             s = con.createStatement(); //Connection interface linje 105.
-            s.executeUpdate("INSERT INTO cars VALUES ('BC27389','Family','Renault','Laguna',1,0,150,'leather',5,1,2900,'Disel','2010-12-31',1000 )");
-            ResultSet rs = s.executeQuery("SELECT car_reg_number, car_model from cars");
+            //s.executeUpdate("INSERT INTO cars VALUES ('BC27381','Family','Renault','Laguna',1,0,150,'leather',5,1,2900,'Disel','2010-12-31',1000 )");
+            ResultSet rs = s.executeQuery("SELECT * from cars");
+
             // ExceuteQuery er en metode i interfacet 'Statement' Se linje 69 i 'Statement'
             // Bliver initialiseret som "rs" der er en del af interfaces 'ResultSet'
 
@@ -43,10 +44,19 @@ public class AccessDB{
             if (rs != null)
                 while (rs.next()) {
 
-                    //System.out.println("Data from name: " + rs.getString("vendor_name") +
-                    //      "        " + rs.getString("vendor_city"));
-                    System.out.printf("Data from name: %-10s ",rs.getString("car_reg_number"));
-                    System.out.printf("Car model: %s\n ",rs.getString("car_model"));
+                    System.out.printf("Data from name: %-10s\n",rs.getString("car_reg_number"));
+                    System.out.printf("Car model: %-10s\n",rs.getString("car_model"));
+                    System.out.printf("Car Type: %-10s\n",rs.getString("car_type"));
+                    System.out.printf("Car cruise-control: %-10s\n",rs.getString("car_cruise_control"));
+                    System.out.printf("Car automatgear: %-10s\n",rs.getString("car_auto_gear"));
+                    System.out.printf("Car hp: %-10s\n",rs.getString("car_hp"));
+                    System.out.printf("Car seat material: %-10s\n",rs.getString("car_seat_material"));
+                    System.out.printf("Car seat numbers: %-10s\n",rs.getString("car_seat_number"));
+                    System.out.printf("Car ac: %-10s\n",rs.getString("car_ac"));
+                    System.out.printf("Car ccm: %-10s\n",rs.getString("car_ccm"));
+                    System.out.printf("Car fuel type: %-10s\n",rs.getString("car_fuel_type"));
+                    System.out.printf("Car reg date: %-10s\n",rs.getString("car_reg_date"));
+                    System.out.printf("Car odometer: %-10s\n",rs.getString("car_odometer"));
 
                 }
             s.close();
@@ -67,9 +77,4 @@ public class AccessDB{
             System.exit(1);  // terminate program
         }
     }
-
-
-
-
-
 }
