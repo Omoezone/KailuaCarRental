@@ -88,3 +88,5 @@ INSERT INTO contracts VALUES
     (3,2,'2019-02-19','2019-2-26',3000,'DC29309');
     
 SET GLOBAL time_zone = '+1:00';
+
+SELECT * FROM cars;
