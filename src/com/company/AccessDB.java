@@ -30,7 +30,7 @@ public class AccessDB{
            */
 
             // in the url we have to tell which account and password to use
-            con =  DriverManager.getConnection(DATABASE_URL,"root","PAS"); //DriverManager Class fra linje 186
+            con =  DriverManager.getConnection(DATABASE_URL,"root","X7913bz1h11"); //DriverManager Class fra linje 186
 
             //*** now that the connection is established we do the query
             s = con.createStatement(); //Connection interface linje 105.
@@ -44,7 +44,7 @@ public class AccessDB{
             if (rs != null)
                 while (rs.next()) {
 
-                    System.out.printf("Data from name: %-14s",rs.getString("car_reg_number"));
+                    System.out.printf("Registration: %-16s",rs.getString("car_reg_number"));
                     System.out.printf("Car model: %-16s",rs.getString("car_model"));
                     System.out.printf("Car Type: %-10s\n",rs.getString("car_type"));
                     System.out.printf("Car cruise-control: %-10s",rs.getString("car_cruise_control"));
