@@ -43,7 +43,7 @@ public class Menu {
                                      System.out.println(customerPrompts[i]);
                                      objectCreation.add(console.next());
                                  }
-                                 s.executeUpdate();
+//                                 s.executeUpdate();
                                  break;
                              case 2:
 
