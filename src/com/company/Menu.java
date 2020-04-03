@@ -20,7 +20,7 @@ public class Menu {
              con = null;
              Statement s = null;
              Class.forName(JDBC_DRIVER);
-             con = DriverManager.getConnection(DATABASE_URL, "root", "X7913bz1h11");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
              s = con.createStatement();
 
 
@@ -37,13 +37,20 @@ public class Menu {
                          ArrayList<String> objectCreation = new ArrayList<>();
                          switch (choiceCreate) {
                              case 1:
-                                 String[] customerPrompts = {"Input the following information: ","First name?", "Last name?", "Address?", "Zip code?", "Mobile number?", "Phone?", "Email?", "When did the driver start driving?"};
-                                 for (int i = 1; i < 10; i++) {
+
+                                 String[] customerPrompts = {"Input the following information: ","First name?", "Last name?", "Address?", "license Number", "Mobile number?", "Phone?", "Email?", "When did the driver start driving?","zip code","City"};
+                                 for (int i = 1; i < 11; i++) {
                                      System.out.println(customerPrompts[0]);
                                      System.out.println(customerPrompts[i]);
                                      objectCreation.add(console.next());
                                  }
-                                 s.executeUpdate();
+
+                                 //Creates zips table
+                                 s.executeUpdate("INSERT INTO zips VALUES('"+Integer.parseInt(objectCreation.get(8))+"','"+objectCreation.get(9)+"')");
+                                 int i = 4;
+                                 // Creates customers table data
+                                 s.executeUpdate("INSERT INTO customers VALUES ('"+i+"','"+ objectCreation.get(0)+"','"+objectCreation.get(1)+"','"+objectCreation.get(2)+"','"+objectCreation.get(3)+"','"+objectCreation.get(4)+"','"+objectCreation.get(5)+"','"+objectCreation.get(6)+"','"+objectCreation.get(7)+"','"+Integer.parseInt(objectCreation.get(8))+"')");
+
                                  break;
                              case 2:
 
@@ -64,7 +71,6 @@ public class Menu {
                          //removeObject(console, cars, renters, contracts);
                          break;
                      case 4:
-                         //printObjects(cars, renters, contracts);
                          break;
                  }
 
@@ -77,7 +83,7 @@ public class Menu {
              }
              /* Errorhandling */
          }
-             catch (SQLException sqlex) {
+         catch(SQLException sqlex) {
             try{
                 System.out.println(sqlex.getMessage());
                 con.close();
