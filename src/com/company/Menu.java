@@ -17,7 +17,7 @@ public class Menu {
              Statement s = null;
              Statement s2 = null;
              Class.forName(JDBC_DRIVER);
-             con = DriverManager.getConnection(DATABASE_URL, "root", "hoPPElort97!#");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
              s = con.createStatement();
 
              //ArrayLists til at indeholde midlertidlig data
@@ -60,11 +60,11 @@ public class Menu {
                                     2. car_reg_number fra cars
                                     Altså skal der både være lavet et customers og cars data sæt, der ikke er koblet op på noget, for at vi vil kunne lave en kontrakt.
                                  *  */
-                                 if(s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") != null && s.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") != null){
+                                 if((s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") != null) && (s.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") != null)){
                                      String[] contractPrompt = {"Input the following information","contract_id","customer_id","contract_to_date","contract_from_date","contract_max_km","car_reg_number"};
                                      for (int h = 1; h < contractPrompt.length; h++) {
-                                         System.out.println(0);
-                                         System.out.println(h);
+                                         System.out.println(contractPrompt[0]);
+                                         System.out.println(contractPrompt[h]);
                                          conList.add(console.next());
                                      }
                                      // Tænker at vi kan tage customer_id fra cusList og car_reg_number fra carList
