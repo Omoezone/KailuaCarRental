@@ -43,7 +43,8 @@ public class Menu {
                                      System.out.println(customerPrompts[i]);
                                      cusList.add(console.next());
                                  }
-                                 //Creates zips table
+                                 //Creates zips rows
+                                 // TODO lav check om der findes en zip allerede ellers laver man en ny
                                  s.executeUpdate("INSERT INTO zips VALUES('"+Integer.parseInt(cusList.get(8))+"','"+cusList.get(9)+"')");
                                  int i = 4; //TODO fix så det er auto increment måske?
                                  // Creates customers table data
@@ -63,7 +64,7 @@ public class Menu {
                                      conList.add(console.next());
                                  }
                                  // Tænker at vi kan tage customer_id fra cusList og car_reg_number fra carList
-                                 s.executeUpdate("INSERT INTO contracts VALUES('"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"','"+conList.get(5)+"','"+conList.get(6)+"')");
+                                 s.executeUpdate("INSERT INTO contracts VALUES('"+conList.get(0)+"','"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"','"+conList.get(5)+"')");
                                  break;
                              case 3:
                                  String[] carPrompts = {"Input the following information for the car: ","Registration number","Type","Brand","Model","cruise control","automatic gear?","Horse Power","Seat Material","Number of seats","Air Condition?","CCM","Fuel Type","Registration date","Odometer"};
@@ -186,7 +187,7 @@ public class Menu {
                          break;
                  }
 
-                 console.nextLine(); //TODO hvad gør denne?
+                 console.nextLine(); //Æder escapeSequence
                  System.out.println("Return to main menu? y/n");
                  String answer = console.nextLine();
                  if (answer.equalsIgnoreCase("n")) {

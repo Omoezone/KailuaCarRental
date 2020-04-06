@@ -7,8 +7,5 @@ public class Main {
     public static void main(String[] args)throws SQLException {
 	// write your code here
         Menu.interactionMenu();
-        // HEJ SEB
-//        Class.forName(JDBC_DRIVER);
-
     }
 }
