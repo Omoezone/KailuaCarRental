@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS zips;
 
 CREATE TABLE zips
 (
-	zip_code INT  PRIMARY KEY  UNIQUE  NOT NULL,
+	zip_code INT  PRIMARY KEY UNIQUE  NOT NULL,
     zip_city VARCHAR(45)  NOT NULL
 );
 
