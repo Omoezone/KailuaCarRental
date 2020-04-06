@@ -37,7 +37,7 @@ DROP TABLE IF EXISTS customers;
 
 CREATE TABLE customers
 (
-	customer_id  INT  PRIMARY KEY  UNIQUE  NOT NULL,
+	customer_id  INT  PRIMARY KEY NOT NULL AUTO_INCREMENT,
     customer_first_name VARCHAR(45)  NOT NULL,
     customer_last_name VARCHAR(45)  NOT NULL,
     customer_address VARCHAR(45)  NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE customers
     customer_phone VARCHAR(45),
     customer_email VARCHAR(45)  NOT NULL,
     customer_driver_since_date DATE  NOT NULL,
-    zip_code INT UNIQUE  NOT NULL,
+    zip_code INT  NOT NULL,
     CONSTRAINT customer_fk_zips
 		FOREIGN KEY (zip_code) REFERENCES zips (zip_code)
 );
@@ -55,7 +55,7 @@ DROP TABLE IF EXISTS contracts;
 
 CREATE TABLE contracts
 (
-	contract_id INT  PRIMARY KEY  UNIQUE  NOT NULL,
+	contract_id INT  PRIMARY KEY AUTO_INCREMENT UNIQUE  NOT NULL,
     customer_id INT  UNIQUE  NOT NULL,
     contract_to_date DATETIME  NOT NULL,
     contract_from_date DATETIME NOT NULL,
@@ -75,7 +75,8 @@ INSERT INTO zips VALUES
 INSERT INTO customers VALUES
 	(1,'Hans','Hansen','Nørrebrogade 45','2983989','83982021',null,'Hans@Hansen.dk','1960-02-12',2200),
     (2,'Jørgen','Andersen','Borgmester Fischers vej 15',' 2992093','27365481','31031929','j_jørgen@hotmail.com','1975-05-25',2000),
-    (3,'Mette','Hjortberg','Østerbrogade 47','8908987', '75679065',null,'Mette89@gmail.com','1996-07-30',2100);
+    (3,'Mette','Hjortberg','Østerbrogade 47','8908987', '75679065',null,'Mette89@gmail.com','1996-07-30',2100),
+    (4,'Søren','Lort','Højstrupvej 20','29084591','2928594','295849','s@lort.com','2010-06-13',2200);
     
 INSERT INTO cars VALUES 
 	('AT28938','Sport','Porsche','911 2017',1,0,370,'leather',2,1,4921,'benzin','2020-03-30',0),
@@ -89,4 +90,8 @@ INSERT INTO contracts VALUES
     
 SET GLOBAL time_zone = '+1:00';
 
-SELECT * FROM cars;
+SELECT *
+FROM   customers c
+WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id);
+
+
