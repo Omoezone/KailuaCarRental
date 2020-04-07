@@ -55,7 +55,7 @@ DROP TABLE IF EXISTS contracts;
 
 CREATE TABLE contracts
 (
-	contract_id INT  PRIMARY KEY AUTO_INCREMENT UNIQUE  NOT NULL,
+	contract_id INT  PRIMARY KEY AUTO_INCREMENT  NOT NULL,
     customer_id INT  UNIQUE  NOT NULL,
     contract_to_date DATETIME  NOT NULL,
     contract_from_date DATETIME NOT NULL,

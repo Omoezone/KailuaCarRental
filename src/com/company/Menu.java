@@ -19,6 +19,7 @@ public class Menu {
              Class.forName(JDBC_DRIVER);
              con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
              s = con.createStatement();
+             s2 = con.createStatement();
 
              //ArrayLists til at indeholde midlertidlig data
              ArrayList<String> cusList = new ArrayList<>();
@@ -60,23 +61,38 @@ public class Menu {
                                     2. car_reg_number fra cars
                                     Altså skal der både være lavet et customers og cars data sæt, der ikke er koblet op på noget, for at vi vil kunne lave en kontrakt.
                                  *  */
-                                 if((s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") != null) && (s.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") != null)){
-                                     String[] contractPrompt = {"Input the following information","contract_id","customer_id","contract_to_date","contract_from_date","contract_max_km","car_reg_number"};
+                                 ResultSet rsCars = s.executeQuery("SELECT car_reg_number,car_model FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)");
+                                 ResultSet rsCust = s2.executeQuery("SELECT customer_id,customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)");
+                                 if(rsCars.next() && rsCust.next()){
+                                     String[] contractPrompt = {"Input the following information","choose customer by id number","contract start date","contract end date","Max km by contract","choose car by registration number"};
                                      for (int h = 1; h < contractPrompt.length; h++) {
                                          System.out.println(contractPrompt[0]);
-                                         System.out.println(contractPrompt[h]);
+                                         System.out.println(contractPrompt[h]+"\n");
+                                         if(h == 1){
+                                             rsCust.beforeFirst();
+                                             while(rsCust.next()) {
+                                                 System.out.printf("Customer id: %s\n", rsCust.getString("customer_id"));
+                                                 System.out.printf("Customer Name: %-4s %s\n\n",rsCust.getString("customer_first_name"),rsCust.getString("customer_last_name"));
+                                             }
+                                         }
+                                         if(h == 5){
+                                             rsCars.beforeFirst();
+                                             while(rsCars.next()){
+                                                 System.out.printf("Car registration number: %-4s \nModel: %s\n\n", rsCars.getString("car_reg_number"),rsCars.getString("car_model"));
+                                             }
+                                         }
                                          conList.add(console.next());
                                      }
                                      // Tænker at vi kan tage customer_id fra cusList og car_reg_number fra carList
-                                     s.executeUpdate("INSERT INTO contracts VALUES('"+conList.get(0)+"','"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"','"+conList.get(5)+"')");
+                                     s.executeUpdate("INSERT INTO contracts (customer_id,contract_to_date,contract_from_date,contract_max_km,car_reg_number) VALUES('"+conList.get(0)+"','"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"')");
                                      conList.clear();
                                      /**/
-                                 }else if(s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") == null && s2.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") == null){
-                                     System.out.println("There is not a cars and customers available to create a contract.\nReturning to menu.");
-                                 }else if(s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") == null){
-                                     System.out.println("There are no cars available to create a contract\nReturning to menu.");
-                                 }else if(s2.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") == null){
-                                     System.out.println("There are no customers available to create a contract\nReturning to menu.");
+                                 }else if(!(rsCars.next()) && !(rsCust.next())){
+                                     System.out.println("There is not a cars and customers available to create a contract.\nPlease return to menu.");
+                                 }else if(!(rsCars.next())){
+                                     System.out.println("There are no cars available to create a contract\nPlease return to menu.");
+                                 }else if(!(rsCust.next())){
+                                     System.out.println("There are no customers available to create a contract\nPlease return to menu.");
                                  }
                                  break;
                              case 3:
@@ -106,35 +122,14 @@ public class Menu {
                      case 2:
                          //TODO updateObject;
                          System.out.println("What information do you wish to change?\n1.Customer\n2.Contract\n3.Car\n4.zips");
+                         int updateChoice = console.nextInt();
+                         updateChoiceMethod(updateChoice,s,console);
                          break;
                      case 3:
                          // TODO removeObject; (Behøver vi dette, eller kan vi ikke bare nøjes med at fokusere på update?)
                          System.out.println("What information do you want to remove?\n1.Customer\n2.Contract\n3.Car\n4.zips");
                          int removeChoice = console.nextInt();
-                         switch (removeChoice){
-                             case 1:
 
-                                 break;
-                             case 2:
-                                 break;
-                             case 3:
-                                 break;
-                             case 4:
-                                 /*System.out.println("Which zip do you want to delete? (Input the zip code)");
-                                 ResultSet rsCu = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name,customer_address,customer_license_number, " +
-                                         "customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code FROM customers");
-                                 if(rsCu != null)
-                                     while(rsCu.next()){
-                                         System.out.printf("zipcode: %s\n",rsCu.getString("zip_code"));
-                                     }
-                                 int zipDelete = console.nextInt();
-                                     s.executeUpdate("SET FOREIGN_KEY_CHECKS=0; ");
-                                 s.executeUpdate("DELETE FROM zips WHERE zip_code='"+zipDelete+"'");
-                                 s.executeUpdate("UPDATE customers SET zip_code = '"+(zipDelete-1)+"' WHERE zip_code = '"+zipDelete+"'");
-                                 s.executeUpdate("SET FOREIGN_KEY_CHECKS=1; "); */
-                                 break;
-                         }
-                         break;
                      case 4: // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
                          System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities");
                          int printChoise = console.nextInt();
@@ -227,5 +222,40 @@ public class Menu {
             System.out.println(noClass.getMessage());
             System.exit(1);  // terminate program
         }
+    }
+    public static void updateChoiceMethod(int updateChoise, Statement s,Scanner console) throws SQLException{
+
+        switch(updateChoise){
+            case 1: //Customers
+                System.out.println("Who do you want to change?");
+                ResultSet cuSet = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name FROM customers ORDER BY customer_first_name");
+                if(cuSet != null){
+                    while(cuSet.next()){
+                        System.out.printf("Customer id: %-10s Customer name: %-4s %s\n", cuSet.getString("costumer_id"),cuSet.getString("customer_first_name"),cuSet.getString("customer_last_name"));
+                    }
+                }
+                int cuInt = console.nextInt();
+                System.out.println("What information do you wish to change in customer? Input number");
+                System.out.println("1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
+                        "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
+                String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
+                        "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
+                int cu = console.nextInt();
+                System.out.println("What should the new info be?");
+                String cuNew = console.nextLine();
+                s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
+                break;
+            case 2: //cars
+
+                break;
+            case 3: //contracts
+
+                break;
+            case 4: //zips
+
+                break;
+
+        }
+        s.executeUpdate("UPDATE customers SET column = new info WHERE info = info");
     }
 }
