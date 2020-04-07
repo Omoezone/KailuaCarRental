@@ -15,6 +15,7 @@ public class Menu {
          try {
              con = null;
              Statement s = null;
+             Statement s2 = null;
              Class.forName(JDBC_DRIVER);
              con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
              s = con.createStatement();
@@ -43,27 +44,40 @@ public class Menu {
                                      System.out.println(customerPrompts[i]);
                                      cusList.add(console.next());
                                  }
-                                 //Creates zips table
-                                 s.executeUpdate("INSERT INTO zips VALUES('"+Integer.parseInt(cusList.get(8))+"','"+cusList.get(9)+"')");
-                                 int i = 4; //TODO fix så det er auto increment måske?
+                                 //Creates zips rows
+                                 try {
+                                     s.executeUpdate("INSERT INTO zips VALUES('" + Integer.parseInt(cusList.get(8)) + "','" + cusList.get(9) + "')");
+                                 }catch(SQLException zipExist){
+                                     System.out.println("Zip code does already exist in the zip table");
+                                 }
                                  // Creates customers table data
-                                 s.executeUpdate("INSERT INTO customers VALUES ('"+i+"','"+ cusList.get(0)+"','"+cusList.get(1)+"','"+cusList.get(2)+"','"+cusList.get(3)+"','"+cusList.get(4)+"','"+cusList.get(5)+"','"+cusList.get(6)+"','"+cusList.get(7)+"','"+Integer.parseInt(cusList.get(8))+"')");
+                                 s.executeUpdate("INSERT INTO customers(customer_first_name,customer_last_name,customer_address,customer_license_number,customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code) VALUES ('"+ cusList.get(0)+"','"+cusList.get(1)+"','"+cusList.get(2)+"','"+cusList.get(3)+"','"+cusList.get(4)+"','"+cusList.get(5)+"','"+cusList.get(6)+"','"+cusList.get(7)+"','"+Integer.parseInt(cusList.get(8))+"')");
+                                 cusList.clear();
                                  break;
                              case 2:
-                                //TODO Create contract (Igang)
                                  /* Nødvendige FRIE data vi behøver for at kunne lave en contract er:
                                     1. customer_id fra customer
                                     2. car_reg_number fra cars
                                     Altså skal der både være lavet et customers og cars data sæt, der ikke er koblet op på noget, for at vi vil kunne lave en kontrakt.
                                  *  */
-                                 String[] contractPrompt = {"Input the following information","contract_id","customer_id","contract_to_date","contract_from_date","contract_max_km","car_reg_number"};
-                                 for (int h = 1; h < contractPrompt.length; h++) {
-                                     System.out.println(0);
-                                     System.out.println(h);
-                                     conList.add(console.next());
+                                 if((s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") != null) && (s.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") != null)){
+                                     String[] contractPrompt = {"Input the following information","contract_id","customer_id","contract_to_date","contract_from_date","contract_max_km","car_reg_number"};
+                                     for (int h = 1; h < contractPrompt.length; h++) {
+                                         System.out.println(contractPrompt[0]);
+                                         System.out.println(contractPrompt[h]);
+                                         conList.add(console.next());
+                                     }
+                                     // Tænker at vi kan tage customer_id fra cusList og car_reg_number fra carList
+                                     s.executeUpdate("INSERT INTO contracts VALUES('"+conList.get(0)+"','"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"','"+conList.get(5)+"')");
+                                     conList.clear();
+                                     /**/
+                                 }else if(s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") == null && s2.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") == null){
+                                     System.out.println("There is not a cars and customers available to create a contract.\nReturning to menu.");
+                                 }else if(s.executeQuery("SELECT car_reg_number FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)") == null){
+                                     System.out.println("There are no cars available to create a contract\nReturning to menu.");
+                                 }else if(s2.executeQuery("SELECT customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)") == null){
+                                     System.out.println("There are no customers available to create a contract\nReturning to menu.");
                                  }
-                                 // Tænker at vi kan tage customer_id fra cusList og car_reg_number fra carList
-                                 s.executeUpdate("INSERT INTO contracts VALUES('"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"','"+conList.get(5)+"','"+conList.get(6)+"')");
                                  break;
                              case 3:
                                  String[] carPrompts = {"Input the following information for the car: ","Registration number","Type","Brand","Model","cruise control","automatic gear?","Horse Power","Seat Material","Number of seats","Air Condition?","CCM","Fuel Type","Registration date","Odometer"};
@@ -75,6 +89,7 @@ public class Menu {
                                  // Det næste statement tager information der er blivet besvaret i sout prompt i forloopet foroven, og sætter det ind i et sql statement, der matcher de forventede værdier.
                                  s.executeUpdate("INSERT INTO cars VALUES ('"+carList.get(0)+"','"+carList.get(1)+"','"+carList.get(2)+"','"+carList.get(3)+"','"+Integer.parseInt(carList.get(4))+"','"+Integer.parseInt(carList.get(5))+"','"+
                                          Integer.parseInt(carList.get(6))+"','"+carList.get(7)+"','"+Integer.parseInt(carList.get(8))+"','"+Integer.parseInt(carList.get(9))+"','"+Integer.parseInt(carList.get(10))+"','"+carList.get(11)+"','"+carList.get(12)+"','"+Integer.parseInt(carList.get(13))+"')");
+                                 carList.clear();
                                  break;
                              case 4: //Til at lave en seperat zip kode uden en customer. De bliver lavet sammen med customer i case 1
                                  String[] zipPrompts = {"Input the following information for the car: ","zip code","city"};
@@ -84,6 +99,7 @@ public class Menu {
                                      zipList.add(console.next());
                                  }
                                  s.executeUpdate("INSERT INTO zips VALUES ('"+zipList.get(0)+"','"+zipList.get(1)+"')");
+                                 zipList.clear();
                                  break;
                          }
                          break;
@@ -186,7 +202,7 @@ public class Menu {
                          break;
                  }
 
-                 console.nextLine(); //TODO hvad gør denne?
+                 console.nextLine(); //Æder escapeSequence
                  System.out.println("Return to main menu? y/n");
                  String answer = console.nextLine();
                  if (answer.equalsIgnoreCase("n")) {
