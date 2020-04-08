@@ -267,14 +267,9 @@ public class Menu {
             System.exit(1);  // terminate program
         }
     }
-    public static void updateChoiceMethod(int updateChoice, Statement s,Scanner console) throws SQLException{
-        String[] mPArr = {{"1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
-                "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code",};
+    public static void updateChoiceMethod(int updateChoise, Statement s,Scanner console) throws SQLException{
 
-        String[][][][] mCArr = {{"customer_first_name","customer_last_name","customer_address","customer_license_number",
-                "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"},{},{},{}};
-        switch(updateChoice){
-
+        switch(updateChoise){
             case 1: //Customers
                 System.out.println("Who do you want to change?");
                 ResultSet cuSet = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name FROM customers ORDER BY customer_first_name");
@@ -284,16 +279,16 @@ public class Menu {
                     }
                 }
                 int cuInt = console.nextInt();
-                System.out.println("What information do you wish to change? Input number");
-                System.out.println(mPArr[0]);
+                System.out.println("What information do you wish to change in customer? Input number");
+                System.out.println("1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
+                        "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
                 String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
                         "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
-                int cu = console.nextInt()-1;
+                int cu = console.nextInt();
                 System.out.println("What should the new info be?");
                 String cuNew = console.nextLine();
-                s.executeUpdate("UPDATE customers SET '"+mCArr[updateChoice-1][cu]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
+                s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
                 break;
-
             case 2: //cars
                 System.out.println("Who do you want to change?");
                 ResultSet carSet = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name FROM customers ORDER BY customer_first_name");
