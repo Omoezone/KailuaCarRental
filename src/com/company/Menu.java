@@ -6,38 +6,52 @@ import java.util.Scanner;
 import java.lang.*;
 
 public class Menu {
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; // info: https://en.wikipedia.org/wiki/JDBC_driver
-    static final String DATABASE_URL = "jdbc:mysql://localhost:3306/kailua";
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; //
+    static final String DATABASE_URL = "jdbc:mysql://localhost:3306/kailua"; // url for vores DB på localhost
     static Connection con;
 
     public static void interactionMenu()throws SQLException{
         Scanner console = new Scanner(System.in);
          try {
+             // DB connection statements
              con = null;
              Statement s = null;
              Statement s2 = null;
              Class.forName(JDBC_DRIVER);
+
+             // Connection statement der bruger vores final string URL og vores password til DB.
              con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
+
+             // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
              s = con.createStatement();
              s2 = con.createStatement();
 
-             //ArrayLists til at indeholde midlertidlig data
+             // ArrayLists til at indeholde midlertidlig data
              ArrayList<String> cusList = new ArrayList<>();
              ArrayList<String> carList = new ArrayList<>();
              ArrayList<String> conList = new ArrayList<>();
              ArrayList<String> zipList = new ArrayList<>();
-             //loops while user inputs y
+
+             // loops while user inputs y
              boolean mainMenu = true;
              while (mainMenu) {
-                 //Choose which object to create 1,2 or 3
+                 //Choose which action to do with 1,2, 3 or 4.
                  System.out.println("Press 1 to create new DB entry \npress 2 to change an existing entry \npress 3 to remove an existing entry \npress 4 to print list of entries");
                  int choice = console.nextInt();
                  switch (choice) {
                      case 1:
                          System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city");
                          int choiceCreate = console.nextInt();
-                         // ArrayList<String> objectCreation = new ArrayList<>(); //Temp ArrayList der indeholder de informationer vi bruger til at sende excecuteUpdate statements til DB
+                         // ArrayList<String> objectCreation = new ArrayList<>();
+                         // Temp ArrayList der indeholder de informationer vi bruger til at sende excecuteUpdate statements til DB
                          switch (choiceCreate) {
+                             /*
+                             case 1: Customer Creation
+                             Bruger bliver promptet for at indtaste information i for loop (fra String array på linie 49) og løbende bliver
+                             Informationen om customers zip code og city bliver først indsat i DB med try/catch statement der sørger for at
+                             det ikke allerede er information der er i zip code table. Derefter sættes resten informationen ind i DB.
+                             */
+
                              case 1:
                                  String[] customerPrompts = {"Input the following information: ","First name?", "Last name?", "Address?", "license Number", "Mobile number?", "Phone?", "Email?", "When did the driver start driving?","zip code","City"};
                                  for (int i = 1; i < 11; i++) {
@@ -45,7 +59,7 @@ public class Menu {
                                      System.out.println(customerPrompts[i]);
                                      cusList.add(console.next());
                                  }
-                                 //Creates zips rows
+                                 // Creates zips rows med try catch, for at sikre at zip ikke allerede findes.
                                  try {
                                      s.executeUpdate("INSERT INTO zips VALUES('" + Integer.parseInt(cusList.get(8)) + "','" + cusList.get(9) + "')");
                                  }catch(SQLException zipExist){
@@ -55,14 +69,25 @@ public class Menu {
                                  s.executeUpdate("INSERT INTO customers(customer_first_name,customer_last_name,customer_address,customer_license_number,customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code) VALUES ('"+ cusList.get(0)+"','"+cusList.get(1)+"','"+cusList.get(2)+"','"+cusList.get(3)+"','"+cusList.get(4)+"','"+cusList.get(5)+"','"+cusList.get(6)+"','"+cusList.get(7)+"','"+Integer.parseInt(cusList.get(8))+"')");
                                  cusList.clear();
                                  break;
+
+                             /*
+                             Case 2: Contract Creation
+                             først bliver der lavet to resultsets, som bliver tjekket med subqueries for om der der nogen "frie" biler og kunder.
+                             Hvis der er, så bliver man promptet til at vælge én af hver og ellers er der en række med else ifs, som, ud fra
+                             om det er en car og/eler en customer, der mangler, skriver 'fejlmeddelselse' og beder brugeren om at vænne tilbage
+                             til hovedmenuen.
+                             */
+
                              case 2:
                                  /* Nødvendige FRIE data vi behøver for at kunne lave en contract er:
                                     1. customer_id fra customer
                                     2. car_reg_number fra cars
                                     Altså skal der både være lavet et customers og cars data sæt, der ikke er koblet op på noget, for at vi vil kunne lave en kontrakt.
-                                 *  */
+                                 */
                                  ResultSet rsCars = s.executeQuery("SELECT car_reg_number,car_model FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)");
                                  ResultSet rsCust = s2.executeQuery("SELECT customer_id,customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)");
+                                 // Hvis der findes useable (altså uden contract) entries i begge Resultsets, så skal bruger vælge en af hver for at
+                                 // skabe en ny contract.
                                  if(rsCars.next() && rsCust.next()){
                                      String[] contractPrompt = {"Input the following information","choose customer by id number","contract start date","contract end date","Max km by contract","choose car by registration number"};
                                      for (int h = 1; h < contractPrompt.length; h++) {
@@ -86,7 +111,7 @@ public class Menu {
                                      // Tænker at vi kan tage customer_id fra cusList og car_reg_number fra carList
                                      s.executeUpdate("INSERT INTO contracts (customer_id,contract_to_date,contract_from_date,contract_max_km,car_reg_number) VALUES('"+conList.get(0)+"','"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"')");
                                      conList.clear();
-                                     /**/
+                                 // Hvis der mangler en bil og/eller kunde får man én af de følgende fejl.
                                  }else if(!(rsCars.next()) && !(rsCust.next())){
                                      System.out.println("There is not a cars and customers available to create a contract.\nPlease return to menu.");
                                  }else if(!(rsCars.next())){
@@ -95,6 +120,13 @@ public class Menu {
                                      System.out.println("There are no customers available to create a contract\nPlease return to menu.");
                                  }
                                  break;
+
+                             /*
+                             case 3: Car creation
+                             bruger bliver promptet til at indtaste information om bilen, som bliver added til en temp arraylist som derefter
+                             bliver brugt som 'parametre' til SQL statement, som skaber den nye bil i vores database
+                             */
+
                              case 3:
                                  String[] carPrompts = {"Input the following information for the car: ","Registration number","Type","Brand","Model","cruise control","automatic gear?","Horse Power","Seat Material","Number of seats","Air Condition?","CCM","Fuel Type","Registration date","Odometer"};
                                  for (int j = 1; j < carPrompts.length; j++) {
@@ -102,12 +134,19 @@ public class Menu {
                                      System.out.println(carPrompts[j]);
                                      carList.add(console.next());
                                  }
-                                 // Det næste statement tager information der er blivet besvaret i sout prompt i forloopet foroven, og sætter det ind i et sql statement, der matcher de forventede værdier.
+                                 // Det næste statement tager information der er blivet besvaret i sout prompt i forloopet foroven,
+                                 // og sætter det ind i et sql statement, der matcher de forventede værdier.
                                  s.executeUpdate("INSERT INTO cars VALUES ('"+carList.get(0)+"','"+carList.get(1)+"','"+carList.get(2)+"','"+carList.get(3)+"','"+Integer.parseInt(carList.get(4))+"','"+Integer.parseInt(carList.get(5))+"','"+
                                          Integer.parseInt(carList.get(6))+"','"+carList.get(7)+"','"+Integer.parseInt(carList.get(8))+"','"+Integer.parseInt(carList.get(9))+"','"+Integer.parseInt(carList.get(10))+"','"+carList.get(11)+"','"+carList.get(12)+"','"+Integer.parseInt(carList.get(13))+"')");
                                  carList.clear();
                                  break;
-                             case 4: //Til at lave en seperat zip kode uden en customer. De bliver lavet sammen med customer i case 1
+
+                             /*
+                             case 4: Zip Code/ City Creation
+                             Til at lave en separat zip kode uden en customer. De bliver lavet sammen med customer i case 1
+                             */
+
+                             case 4:
                                  String[] zipPrompts = {"Input the following information for the car: ","zip code","city"};
                                  for (int k = 1; k < zipPrompts.length; k++) {
                                      System.out.println(zipPrompts[0]);
