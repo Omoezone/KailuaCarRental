@@ -163,13 +163,13 @@ public class Menu {
                          // Kalder metoden 'updateChoiceMethod' der parameteroverfører 'updateChoise' fra linje 166 (hvad man ønsker at ændre)
                          // s = statement object, console = Scanner objekt
                          //TODO updateObject;
-                         System.out.println("What information do you wish to change?\n1.Customer\n2.Contract\n3.Car\n4.zips");
+                         System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.zips");
                          int updateChoice = console.nextInt();
                          updateChoiceMethod(updateChoice,s,console);
                          break;
                      case 3:
                          // TODO removeObject; (Behøver vi dette, eller kan vi ikke bare nøjes med at fokusere på update?)
-                         System.out.println("What information do you want to remove?\n1.Customer\n2.Contract\n3.Car\n4.zips");
+                         System.out.println("What information do you want to remove?\n1.Customer\n2.Contract\n3.Car");
                          int removeChoice = console.nextInt();
 
                      case 4:
@@ -274,7 +274,7 @@ public class Menu {
                 ResultSet cuSet = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name FROM customers ORDER BY customer_first_name");
                 if(cuSet != null){
                     while(cuSet.next()){
-                        System.out.printf("Customer id: %-10s Customer name: %-4s %s\n", cuSet.getString("costumer_id"),cuSet.getString("customer_first_name"),cuSet.getString("customer_last_name"));
+                        System.out.printf("Customer id: %-10s Customer name: %-4s %s\n", cuSet.getString("customer_id"),cuSet.getString("customer_first_name"),cuSet.getString("customer_last_name"));
                     }
                 }
                 int cuInt = console.nextInt();
@@ -283,10 +283,21 @@ public class Menu {
                         "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
                 String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
                         "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
-                int cu = console.nextInt();
+                int cu = console.nextInt()-1;
                 System.out.println("What should the new info be?");
+                console.nextLine();
                 String cuNew = console.nextLine();
-                s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
+                if(cu == 8) {
+                    try {
+                        System.out.println("What is the city that belongs to the zip code");
+                        String newCity = console.nextLine();
+                        s.executeUpdate("INSERT INTO zips VALUES('" + Integer.parseInt(cuNew) + "','" + newCity + "')");
+                    } catch (SQLException zipExist) {
+                        System.out.println("Zip code does already exist in the zip table");
+                    }
+                    s.executeUpdate("UPDATE customers SET "+custTemp[cu]+" = "+Integer.parseInt(cuNew)+" WHERE customer_id = "+cuInt+"");
+                }else
+                    s.executeUpdate("UPDATE customers SET "+custTemp[cu]+" = '"+cuNew+"' WHERE customer_id = "+cuInt+"");
                 break;
 
             case 2: //cars
@@ -294,32 +305,54 @@ public class Menu {
                 ResultSet carSet = s.executeQuery("SELECT car_reg_number,car_type,car_brand, car_model FROM cars ORDER BY car_reg_number");
                 if(carSet != null){
                     while(carSet.next()){
-                        System.out.printf("Car registration number: %-10s Car type: %-10s %s\n", carSet.getString("car_reg_number"),carSet.getString("car_type"));
-                        System.out.printf("Car brand: %-10s Car model : %-10s %s\n\n", carSet.getString("car_brand"),carSet.getString("car_model"));
+                        System.out.printf("Car registration number: %-10s Car type: %-10s\n", carSet.getString("car_reg_number"),carSet.getString("car_type"));
+                        System.out.printf("Car brand: %-10s Car model : %-10s\n\n", carSet.getString("car_brand"),carSet.getString("car_model"));
                     }
                 }
+                console.nextLine();
                 String carReg = console.nextLine().toUpperCase();
                 System.out.println("What information do you wish to change in car? Input number");
                 System.out.println("1# car registration number \n2# car type\n3# car brand\n4# car model\n" +
                         "5# car cruise control \n6# automatic \n7# horsepower \n 8# seat material \n 9# number of seats \n 10# air condition"
                         + "11# ccm \n12# fuel type \n13# registration date \n14# odometer");
-                String[] carTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
-                        "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
-                int car = console.nextInt();
+                String[] carTemp = {"car_reg_number","car_type","car_brand","car_model",
+                        "car_cruise_control","car_auto_gear","car_hp","car_seat_material","car_seat_number","car_ac","car_ccm","car_fuel_type"
+                ,"car_reg_number","car_odometer"};
+                int car = console.nextInt()-1;
                 System.out.println("What should the new info be?");
+                console.nextLine();
                 String carNew = console.nextLine();
-                s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
+
+                if(car == 0 || car == 1 || car == 2|| car == 3 || car == 7 || car == 11){
+                    s.executeUpdate("UPDATE cars SET " + carTemp[car] + " = '" + carNew + "' WHERE car_reg_number = '" + carReg + "'");
+                }else
+                    s.executeUpdate("UPDATE cars SET " + carTemp[car] + " = '" + Integer.parseInt(carNew) + "' WHERE car_reg_number = '" + carReg + "'");
                 break;
 
             case 3: //contracts
-
+                System.out.println("Which contract do you want to change by contract id?");
+                ResultSet conSet = s.executeQuery("SELECT contract_id, customers.customer_id, customer_first_name, customer_last_name, car_reg_number FROM contracts JOIN customers ON contracts.customer_id = customers.customer_id ORDER BY contract_id");
+                if(conSet != null){
+                    while(conSet.next()){
+                        System.out.printf("Contract id: %-10s Customer id: %-10s\n", conSet.getString("contract_id"),conSet.getString("customer_id"));
+                        System.out.printf("customer name: %-4s %-10s Car registration number : %s \n\n", conSet.getString("customer_first_name"),conSet.getString("customer_last_name"),conSet.getString("car_reg_number"));
+                    }
+                }
+                console.nextLine();
+                int conReg = console.nextInt();
+                System.out.println("What information do you wish to change in the contract? Input number");
+                System.out.println("1# contract end date\n 2# max km");
+                String[] conTemp = {"contract_to_date","contract_max_km"};
+                int conCount = console.nextInt()-1;
+                System.out.println("What should the new info be?");
+                console.nextLine();
+                String conNew = console.nextLine();
+                if(conCount == 0){
+                    s.executeUpdate("UPDATE contracts SET "+conTemp[0]+" = '"+conNew+"' WHERE contract_id = "+conReg+"");
+                }else
+                    s.executeUpdate("UPDATE contracts SET "+conTemp[1]+" = '"+Integer.parseInt(conNew)+"' WHERE contract_id = "+conReg+"");
                 break;
-
-            case 4: //zips
-
-                break;
-
         }
-        s.executeUpdate("UPDATE customers SET column = new info WHERE info = info");
+
     }
 }
