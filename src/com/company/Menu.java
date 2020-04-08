@@ -268,7 +268,6 @@ public class Menu {
         }
     }
     public static void updateChoiceMethod(int updateChoise, Statement s,Scanner console) throws SQLException{
-
         switch(updateChoise){
             case 1: //Customers
                 System.out.println("Who do you want to change?");
@@ -289,18 +288,21 @@ public class Menu {
                 String cuNew = console.nextLine();
                 s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
                 break;
+
             case 2: //cars
-                System.out.println("Who do you want to change?");
-                ResultSet carSet = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name FROM customers ORDER BY customer_first_name");
+                System.out.println("Which car do you want to change?");
+                ResultSet carSet = s.executeQuery("SELECT car_reg_number,car_type,car_brand, car_model FROM cars ORDER BY car_reg_number");
                 if(carSet != null){
                     while(carSet.next()){
-                        System.out.printf("Customer id: %-10s Customer name: %-4s %s\n", cuSet.getString("costumer_id"),cuSet.getString("customer_first_name"),cuSet.getString("customer_last_name"));
+                        System.out.printf("Car registration number: %-10s Car type: %-10s %s\n", carSet.getString("car_reg_number"),carSet.getString("car_type"));
+                        System.out.printf("Car brand: %-10s Car model : %-10s %s\n\n", carSet.getString("car_brand"),carSet.getString("car_model"));
                     }
                 }
-                int carInt = console.nextInt();
-                System.out.println("What information do you wish to change in customer? Input number");
-                System.out.println("1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
-                        "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
+                String carReg = console.nextLine().toUpperCase();
+                System.out.println("What information do you wish to change in car? Input number");
+                System.out.println("1# car registration number \n2# car type\n3# car brand\n4# car model\n" +
+                        "5# car cruise control \n6# automatic \n7# horsepower \n 8# seat material \n 9# number of seats \n 10# air condition"
+                        + "11# ccm \n12# fuel type \n13# registration date \n14# odometer");
                 String[] carTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
                         "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
                 int car = console.nextInt();
@@ -308,9 +310,11 @@ public class Menu {
                 String carNew = console.nextLine();
                 s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
                 break;
+
             case 3: //contracts
 
                 break;
+
             case 4: //zips
 
                 break;
