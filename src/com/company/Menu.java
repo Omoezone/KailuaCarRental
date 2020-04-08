@@ -20,7 +20,7 @@ public class Menu {
              Class.forName(JDBC_DRIVER);
 
              // Connection statement der bruger vores final string URL og vores password til DB.
-             con = DriverManager.getConnection(DATABASE_URL, "root", "?");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "Williamjean12");
 
              // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
              s = con.createStatement();
@@ -290,7 +290,23 @@ public class Menu {
                 s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
                 break;
             case 2: //cars
-
+                System.out.println("Who do you want to change?");
+                ResultSet carSet = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name FROM customers ORDER BY customer_first_name");
+                if(carSet != null){
+                    while(carSet.next()){
+                        System.out.printf("Customer id: %-10s Customer name: %-4s %s\n", cuSet.getString("costumer_id"),cuSet.getString("customer_first_name"),cuSet.getString("customer_last_name"));
+                    }
+                }
+                int carInt = console.nextInt();
+                System.out.println("What information do you wish to change in customer? Input number");
+                System.out.println("1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
+                        "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
+                String[] carTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
+                        "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
+                int car = console.nextInt();
+                System.out.println("What should the new info be?");
+                String carNew = console.nextLine();
+                s.executeUpdate("UPDATE customers SET '"+custTemp[cu-1]+"' = '"+cuNew+"' WHERE customer_id = '"+cuInt+"'");
                 break;
             case 3: //contracts
 
