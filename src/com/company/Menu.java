@@ -20,7 +20,7 @@ public class Menu {
              Class.forName(JDBC_DRIVER);
 
              // Connection statement der bruger vores final string URL og vores password til DB.
-             con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "?");
 
              // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
              s = con.createStatement();
@@ -159,6 +159,9 @@ public class Menu {
                          }
                          break;
                      case 2:
+                         // Case 2: changing existing information
+                         // Kalder metoden 'updateChoiceMethod' der parameteroverfører 'updateChoise' fra linje 166 (hvad man ønsker at ændre)
+                         // s = statement object, console = Scanner objekt
                          //TODO updateObject;
                          System.out.println("What information do you wish to change?\n1.Customer\n2.Contract\n3.Car\n4.zips");
                          int updateChoice = console.nextInt();
@@ -169,15 +172,17 @@ public class Menu {
                          System.out.println("What information do you want to remove?\n1.Customer\n2.Contract\n3.Car\n4.zips");
                          int removeChoice = console.nextInt();
 
-                     case 4: // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
+                     case 4:
+                         // Case 4: udprinter et ResultSet object ud fra given printf statements
+                         // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
                          System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities");
                          int printChoise = console.nextInt();
                          switch (printChoise){
                              case 1: // Udprintning af customers table
                                  ResultSet rsCu = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name,customer_address,customer_license_number, " +
                                          "customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code FROM customers");
-                                 if(rsCu != null) {
-                                     while (rsCu.next()) {
+                                 if(rsCu != null) { //Checker at der er data i customers table, ud fra ovenstående SELECT statement
+                                     while (rsCu.next()) { //Går customer tables ResultSet igennem, et 'row' af gangen
                                          System.out.printf("customer id: %-32s", rsCu.getString("customer_id"));
                                          System.out.printf("customer name: %s %-23s", rsCu.getString("customer_first_name"), rsCu.getString("customer_last_name"));
                                          System.out.printf("customer address: %-10s\n", rsCu.getString("customer_address"));
@@ -193,8 +198,8 @@ public class Menu {
                              case 2: // Udprintning af cars table
                                  ResultSet rsCar = s.executeQuery("SELECT car_reg_number,car_type,car_brand,car_model,car_cruise_control,car_auto_gear,car_hp," +
                                          "car_seat_material,car_seat_number,car_ac,car_ccm,car_fuel_type,car_reg_date,car_odometer FROM cars");
-                                 if(rsCar != null){
-                                     while(rsCar.next()){
+                                 if(rsCar != null){ //Checker at der er data i cars table, ud fra ovenstående SELECT statement
+                                     while(rsCar.next()){ //Går cars tables ResultSet igennem, et 'row' af gangen
                                          System.out.printf("Car reg number: %-14s",rsCar.getString("car_reg_number"));
                                          System.out.printf("Car type: %-17s",rsCar.getString("car_type"));
                                          System.out.printf("Car brand & model: %s %-10s\n",rsCar.getString("car_brand"),rsCar.getString("car_model"));
@@ -213,8 +218,8 @@ public class Menu {
                                  break;
                              case 3: //Prints the contracts table
                                  ResultSet rsCon = s.executeQuery("SELECT contract_id,customer_id,contract_to_date,contract_from_date,contract_max_km,car_reg_number FROM contracts");
-                                 if(rsCon != null){
-                                     while(rsCon.next()){
+                                 if(rsCon != null){//Checker at der er data i contracts table, ud fra ovenstående SELECT statement
+                                     while(rsCon.next()){ //Går contracts tables ResultSet igennem, et 'row' af gangen
                                          System.out.printf("Contract id: %-16s",rsCon.getString("contract_id"));
                                          System.out.printf("Customer id: %-17s",rsCon.getString("customer_id"));
                                          System.out.printf("Contract period: From '%s' to '%-10s'\n",rsCon.getString("contract_from_date"),rsCon.getString("contract_to_date"));
@@ -225,8 +230,8 @@ public class Menu {
                                  break;
                              case 4: //Prints the zips table
                                  ResultSet rsZip = s.executeQuery("SELECT zip_code,zip_city FROM zips");
-                                 if(rsZip != null){
-                                     while(rsZip.next()){
+                                 if(rsZip != null){//Checker at der er data i zips table, ud fra ovenstående SELECT statement
+                                     while(rsZip.next()){//Går zips tables ResultSet igennem, et 'row' af gangen
                                          System.out.printf("Zip code: %-12s",rsZip.getString("zip_code"));
                                          System.out.printf("City for zip code: %s\n\n",rsZip.getString("zip_city"));
                                      }
