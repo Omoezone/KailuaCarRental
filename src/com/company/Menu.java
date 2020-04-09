@@ -268,11 +268,16 @@ public class Menu {
         }
     }
     public static void updateChoiceMethod(int updateChoice, Statement s,Scanner console) throws SQLException{
-        String[] mPArr = {{"1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
-                "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code",};
+        String[] mPArr = {"1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
+                "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code" ,
+                "1# car registration number \n2# car type\n3# car brand\n4# car model\n5# car cruise control \n6# automatic"+
+                "\n7# horsepower \n8# seat material \n9# number of seats \n10# air condition \n11# ccm \n12# fuel type \n13# registration date \n14# odometer",
+                "1# contract end date\n 2# max km"};
 
-        String[][][][] mCArr = {{"customer_first_name","customer_last_name","customer_address","customer_license_number",
-                "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"},{},{},{}};
+        String[][] mCArr = {{"customer_first_name","customer_last_name","customer_address","customer_license_number","customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"},
+                {"car_reg_number","car_type","car_brand","car_model","car_cruise_control","car_auto_gear","car_hp","car_sat_material","car_seat_number","car_ac","car_ccm","car_fuel_type","car_reg_number","car_odometer"},
+                {"contract_to_date","contract_max_km"}};
+
         switch(updateChoice){
 
             case 1: //Customers
@@ -286,8 +291,6 @@ public class Menu {
                 int cuInt = console.nextInt();
                 System.out.println("What information do you wish to change? Input number");
                 System.out.println(mPArr[0]);
-                String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
-                        "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
                 int cu = console.nextInt()-1;
                 System.out.println("What should the new info be?");
                 String cuNew = console.nextLine();
