@@ -20,7 +20,7 @@ public class Menu {
              Class.forName(JDBC_DRIVER);
 
              // Connection statement der bruger vores final string URL og vores password til DB.
-             con = DriverManager.getConnection(DATABASE_URL, "root", "Williamjean12");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "X7913bz1h11");
 
              // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
              s = con.createStatement();
@@ -169,9 +169,8 @@ public class Menu {
                          break;
                      case 3:
                          // TODO removeObject; (Behøver vi dette, eller kan vi ikke bare nøjes med at fokusere på update?)
-                         System.out.println("What information do you want to remove?\n1.Customer\n2.Contract\n3.Car");
-                         int removeChoice = console.nextInt();
-
+                         removeEntry(s, console);
+                         break;
                      case 4:
                          // Case 4: udprinter et ResultSet object ud fra given printf statements
                          // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
@@ -179,63 +178,16 @@ public class Menu {
                          int printChoise = console.nextInt();
                          switch (printChoise){
                              case 1: // Udprintning af customers table
-                                 ResultSet rsCu = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name,customer_address,customer_license_number, " +
-                                         "customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code FROM customers");
-                                 if(rsCu != null) { //Checker at der er data i customers table, ud fra ovenstående SELECT statement
-                                     while (rsCu.next()) { //Går customer tables ResultSet igennem, et 'row' af gangen
-                                         System.out.printf("customer id: %-32s", rsCu.getString("customer_id"));
-                                         System.out.printf("customer name: %s %-23s", rsCu.getString("customer_first_name"), rsCu.getString("customer_last_name"));
-                                         System.out.printf("customer address: %-10s\n", rsCu.getString("customer_address"));
-                                         System.out.printf("customer license number: %-20s", rsCu.getString("customer_license_number"));
-                                         System.out.printf("customer mobile phone: %-20s", rsCu.getString("customer_mobile_phone"));
-                                         System.out.printf("customer phone: %-10s\n", rsCu.getString("customer_phone"));
-                                         System.out.printf("customer email: %-29s", rsCu.getString("customer_email"));
-                                         System.out.printf("customer driver since: %-20s", rsCu.getString("customer_driver_since_date"));
-                                         System.out.printf("customer zipcode: %-10s\n\n", rsCu.getString("zip_code"));
-                                     }
-                                 }
+                                 printCustomers(s);
                                  break;
                              case 2: // Udprintning af cars table
-                                 ResultSet rsCar = s.executeQuery("SELECT car_reg_number,car_type,car_brand,car_model,car_cruise_control,car_auto_gear,car_hp," +
-                                         "car_seat_material,car_seat_number,car_ac,car_ccm,car_fuel_type,car_reg_date,car_odometer FROM cars");
-                                 if(rsCar != null){ //Checker at der er data i cars table, ud fra ovenstående SELECT statement
-                                     while(rsCar.next()){ //Går cars tables ResultSet igennem, et 'row' af gangen
-                                         System.out.printf("Car reg number: %-14s",rsCar.getString("car_reg_number"));
-                                         System.out.printf("Car type: %-17s",rsCar.getString("car_type"));
-                                         System.out.printf("Car brand & model: %s %-10s\n",rsCar.getString("car_brand"),rsCar.getString("car_model"));
-                                         System.out.printf("Car cruise-control: %-10s",rsCar.getString("car_cruise_control"));
-                                         System.out.printf("Car auto-gear: %-12s",rsCar.getString("car_auto_gear"));
-                                         System.out.printf("Car hp: %-10s\n",rsCar.getString("car_hp"));
-                                         System.out.printf("Car seat material: %-11s",rsCar.getString("car_seat_material"));
-                                         System.out.printf("Car seat numbers: %-9s",rsCar.getString("car_seat_number"));
-                                         System.out.printf("Car ac: %-10s\n",rsCar.getString("car_ac"));
-                                         System.out.printf("Car ccm: %-21s",rsCar.getString("car_ccm"));
-                                         System.out.printf("Car fuel type: %-12s",rsCar.getString("car_fuel_type"));
-                                         System.out.printf("Car reg date: %-15s",rsCar.getString("car_reg_date"));
-                                         System.out.printf("Car odometer: %-10s\n\n",rsCar.getString("car_odometer"));
-                                     }
-                                 }
+                                 printCars(s);
                                  break;
                              case 3: //Prints the contracts table
-                                 ResultSet rsCon = s.executeQuery("SELECT contract_id,customer_id,contract_to_date,contract_from_date,contract_max_km,car_reg_number FROM contracts");
-                                 if(rsCon != null){//Checker at der er data i contracts table, ud fra ovenstående SELECT statement
-                                     while(rsCon.next()){ //Går contracts tables ResultSet igennem, et 'row' af gangen
-                                         System.out.printf("Contract id: %-16s",rsCon.getString("contract_id"));
-                                         System.out.printf("Customer id: %-17s",rsCon.getString("customer_id"));
-                                         System.out.printf("Contract period: From '%s' to '%-10s'\n",rsCon.getString("contract_from_date"),rsCon.getString("contract_to_date"));
-                                         System.out.printf("Contract max km: %-12s",rsCon.getString("contract_max_km"));
-                                         System.out.printf("Car number: %-10s\n\n",rsCon.getString("car_reg_number"));
-                                     }
-                                 }
+                                 printContracts(s);
                                  break;
                              case 4: //Prints the zips table
-                                 ResultSet rsZip = s.executeQuery("SELECT zip_code,zip_city FROM zips");
-                                 if(rsZip != null){//Checker at der er data i zips table, ud fra ovenstående SELECT statement
-                                     while(rsZip.next()){//Går zips tables ResultSet igennem, et 'row' af gangen
-                                         System.out.printf("Zip code: %-12s",rsZip.getString("zip_code"));
-                                         System.out.printf("City for zip code: %s\n\n",rsZip.getString("zip_city"));
-                                     }
-                                 }
+                                 printCities(s);
                                  break;
                          }
                          break;
@@ -267,6 +219,62 @@ public class Menu {
             System.exit(1);  // terminate program
         }
     }
+
+    private static void removeEntry(Statement s, Scanner console) throws SQLException {
+        System.out.println("What information do you want to remove?\n1.Customer\n2.Car\n3.Contract");
+        int removeChoice = console.nextInt();
+        String areYouSure;
+        switch (removeChoice){
+            case 1: // Customer
+                printCustomers(s);
+                System.out.println("Which customer do you want to remove? Please enter ID nr");
+                int removeChoiceCus = console.nextInt();
+                System.out.println("Are you sure? y/n");
+                areYouSure = console.next();
+                if(areYouSure.equalsIgnoreCase("n")){
+                    removeEntry(s, console);
+                }else{
+                    if((s.executeQuery("SELECT customer_id FROM contracts WHERE customer_id = "+removeChoiceCus))!= null) {
+                        s.executeUpdate("DELETE FROM contracts WHERE customer_id = " + removeChoiceCus);
+                        s.executeUpdate("DELETE FROM customers WHERE customer_id = " + removeChoiceCus);
+                    }else{
+                        s.executeUpdate("DELETE FROM customers WHERE customer_id = " + removeChoiceCus);
+                    }
+                }
+                break;
+
+            case 2: // Car
+                printCars(s);
+                System.out.println("Which car do you want to remove? Please enter registration number");
+                String removeChoiceCar = console.next().toUpperCase();
+                System.out.println("Are you sure? y/n");
+                areYouSure = console.next();
+                if(areYouSure.equalsIgnoreCase("n")){
+                    removeEntry(s, console);
+                }else{
+                    if((s.executeQuery("SELECT car_reg_number FROM contracts WHERE car_reg_number = '"+removeChoiceCar+"'"))!= null) {
+                        s.executeUpdate("DELETE FROM contracts WHERE car_reg_number = '" + removeChoiceCar+"'");
+                        s.executeUpdate("DELETE FROM cars WHERE car_reg_number = '" + removeChoiceCar+"'");
+                    }else{
+                        s.executeUpdate("DELETE FROM cars WHERE car_reg_number = '" + removeChoiceCar+"'");
+                    }
+                }
+                break;
+            case 3: // Contract
+                printContracts(s);
+                System.out.println("Which contract do you want to remove? Please enter ID nr");
+                int removeChoiceCon = console.nextInt();
+                System.out.println("Are you sure? y/n");
+                areYouSure = console.next();
+                if(areYouSure.equalsIgnoreCase("n")){
+                    removeEntry(s, console);
+                }else{
+                    s.executeUpdate("DELETE FROM contracts WHERE contract_id = " + removeChoiceCon);
+                }
+                break;
+        }
+    }
+
     public static void updateChoiceMethod(int updateChoise, Statement s,Scanner console) throws SQLException{
         switch(updateChoise){
             case 1: //Customers
@@ -353,6 +361,68 @@ public class Menu {
                     s.executeUpdate("UPDATE contracts SET "+conTemp[1]+" = '"+Integer.parseInt(conNew)+"' WHERE contract_id = "+conReg+"");
                 break;
         }
+    }
 
+    private static void printCities(Statement s) throws SQLException {
+        ResultSet rsZip = s.executeQuery("SELECT zip_code,zip_city FROM zips");
+        if(rsZip != null){//Checker at der er data i zips table, ud fra ovenstående SELECT statement
+            while(rsZip.next()){//Går zips tables ResultSet igennem, et 'row' af gangen
+                System.out.printf("Zip code: %-12s",rsZip.getString("zip_code"));
+                System.out.printf("City for zip code: %s\n\n",rsZip.getString("zip_city"));
+            }
+        }
+    }
+
+    private static void printContracts(Statement s) throws SQLException {
+        ResultSet rsCon = s.executeQuery("SELECT contract_id,customer_id,contract_to_date,contract_from_date,contract_max_km,car_reg_number FROM contracts");
+        if(rsCon != null){//Checker at der er data i contracts table, ud fra ovenstående SELECT statement
+            while(rsCon.next()){ //Går contracts tables ResultSet igennem, et 'row' af gangen
+                System.out.printf("Contract id: %-16s",rsCon.getString("contract_id"));
+                System.out.printf("Customer id: %-17s",rsCon.getString("customer_id"));
+                System.out.printf("Contract period: From '%s' to '%-10s'\n",rsCon.getString("contract_from_date"),rsCon.getString("contract_to_date"));
+                System.out.printf("Contract max km: %-12s",rsCon.getString("contract_max_km"));
+                System.out.printf("Car number: %-10s\n\n",rsCon.getString("car_reg_number"));
+            }
+        }
+    }
+
+    private static void printCars(Statement s) throws SQLException {
+        ResultSet rsCar = s.executeQuery("SELECT car_reg_number,car_type,car_brand,car_model,car_cruise_control,car_auto_gear,car_hp," +
+                "car_seat_material,car_seat_number,car_ac,car_ccm,car_fuel_type,car_reg_date,car_odometer FROM cars");
+        if(rsCar != null){ //Checker at der er data i cars table, ud fra ovenstående SELECT statement
+            while(rsCar.next()){ //Går cars tables ResultSet igennem, et 'row' af gangen
+                System.out.printf("Car reg number: %-14s",rsCar.getString("car_reg_number"));
+                System.out.printf("Car type: %-17s",rsCar.getString("car_type"));
+                System.out.printf("Car brand & model: %s %-10s\n",rsCar.getString("car_brand"),rsCar.getString("car_model"));
+                System.out.printf("Car cruise-control: %-10s",rsCar.getString("car_cruise_control"));
+                System.out.printf("Car auto-gear: %-12s",rsCar.getString("car_auto_gear"));
+                System.out.printf("Car hp: %-10s\n",rsCar.getString("car_hp"));
+                System.out.printf("Car seat material: %-11s",rsCar.getString("car_seat_material"));
+                System.out.printf("Car seat numbers: %-9s",rsCar.getString("car_seat_number"));
+                System.out.printf("Car ac: %-10s\n",rsCar.getString("car_ac"));
+                System.out.printf("Car ccm: %-21s",rsCar.getString("car_ccm"));
+                System.out.printf("Car fuel type: %-12s",rsCar.getString("car_fuel_type"));
+                System.out.printf("Car reg date: %-15s",rsCar.getString("car_reg_date"));
+                System.out.printf("Car odometer: %-10s\n\n",rsCar.getString("car_odometer"));
+            }
+        }
+    }
+
+    private static void printCustomers(Statement s) throws SQLException {
+        ResultSet rsCu = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name,customer_address,customer_license_number, " +
+                "customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code FROM customers");
+        if(rsCu != null) { //Checker at der er data i customers table, ud fra ovenstående SELECT statement
+            while (rsCu.next()) { //Går customer tables ResultSet igennem, et 'row' af gangen
+                System.out.printf("customer id: %-32s", rsCu.getString("customer_id"));
+                System.out.printf("customer name: %s %-23s", rsCu.getString("customer_first_name"), rsCu.getString("customer_last_name"));
+                System.out.printf("customer address: %-10s\n", rsCu.getString("customer_address"));
+                System.out.printf("customer license number: %-20s", rsCu.getString("customer_license_number"));
+                System.out.printf("customer mobile phone: %-20s", rsCu.getString("customer_mobile_phone"));
+                System.out.printf("customer phone: %-10s\n", rsCu.getString("customer_phone"));
+                System.out.printf("customer email: %-29s", rsCu.getString("customer_email"));
+                System.out.printf("customer driver since: %-20s", rsCu.getString("customer_driver_since_date"));
+                System.out.printf("customer zipcode: %-10s\n\n", rsCu.getString("zip_code"));
+            }
+        }
     }
 }
