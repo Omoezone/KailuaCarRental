@@ -20,7 +20,7 @@ public class Menu {
              Class.forName(JDBC_DRIVER);
 
              // Connection statement der bruger vores final string URL og vores password til DB.
-             con = DriverManager.getConnection(DATABASE_URL, "root", "X7913bz1h11");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "Williamjean12");
 
              // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
              s = con.createStatement();
@@ -40,7 +40,7 @@ public class Menu {
                  int choice = console.nextInt();
                  switch (choice) {
                      case 1:
-                         System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city");
+                         System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city\nPress 5 to return to menu");
                          int choiceCreate = console.nextInt();
                          // ArrayList<String> objectCreation = new ArrayList<>();
                          // Temp ArrayList der indeholder de informationer vi bruger til at sende excecuteUpdate statements til DB
@@ -51,7 +51,6 @@ public class Menu {
                              Informationen om customers zip code og city bliver først indsat i DB med try/catch statement der sørger for at
                              det ikke allerede er information der er i zip code table. Derefter sættes resten informationen ind i DB.
                              */
-
                              case 1:
                                  String[] customerPrompts = {"Input the following information: ","First name?", "Last name?", "Address?", "license Number", "Mobile number?", "Phone?", "Email?", "When did the driver start driving?","zip code","City"};
                                  for (int i = 1; i < 11; i++) {
@@ -156,25 +155,28 @@ public class Menu {
                                  s.executeUpdate("INSERT INTO zips VALUES ('"+zipList.get(0)+"','"+zipList.get(1)+"')");
                                  zipList.clear();
                                  break;
+                             default:
+                                 interactionMenu();
+                                 break;
                          }
                          break;
+
                      case 2:
                          // Case 2: changing existing information
                          // Kalder metoden 'updateChoiceMethod' der parameteroverfører 'updateChoise' fra linje 166 (hvad man ønsker at ændre)
                          // s = statement object, console = Scanner objekt
                          //TODO updateObject;
-                         System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.zips");
+                         System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.zips\n5.Return to menu");
                          int updateChoice = console.nextInt();
                          updateChoiceMethod(updateChoice,s,console);
                          break;
                      case 3:
-                         // TODO removeObject; (Behøver vi dette, eller kan vi ikke bare nøjes med at fokusere på update?)
                          removeEntry(s, console);
                          break;
                      case 4:
                          // Case 4: udprinter et ResultSet object ud fra given printf statements
                          // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
-                         System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities");
+                         System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities\n5.Return to menu");
                          int printChoise = console.nextInt();
                          switch (printChoise){
                              case 1: // Udprintning af customers table
@@ -188,6 +190,9 @@ public class Menu {
                                  break;
                              case 4: //Prints the zips table
                                  printCities(s);
+                                 break;
+                             default:
+                                 interactionMenu();
                                  break;
                          }
                          break;
@@ -221,7 +226,7 @@ public class Menu {
     }
 
     private static void removeEntry(Statement s, Scanner console) throws SQLException {
-        System.out.println("What information do you want to remove?\n1.Customer\n2.Car\n3.Contract");
+        System.out.println("What information do you want to remove?\n1.Customer\n2.Car\n3.Contract\n4.Return to menu");
         int removeChoice = console.nextInt();
         String areYouSure;
         switch (removeChoice){
@@ -271,6 +276,9 @@ public class Menu {
                 }else{
                     s.executeUpdate("DELETE FROM contracts WHERE contract_id = " + removeChoiceCon);
                 }
+                break;
+            default:
+                interactionMenu();
                 break;
         }
     }
@@ -359,6 +367,9 @@ public class Menu {
                     s.executeUpdate("UPDATE contracts SET "+conTemp[0]+" = '"+conNew+"' WHERE contract_id = "+conReg+"");
                 }else
                     s.executeUpdate("UPDATE contracts SET "+conTemp[1]+" = '"+Integer.parseInt(conNew)+"' WHERE contract_id = "+conReg+"");
+                break;
+            default:
+                interactionMenu();
                 break;
         }
     }
