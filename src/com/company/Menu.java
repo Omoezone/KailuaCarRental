@@ -3,7 +3,6 @@ package com.company;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.lang.*;
 
 public class Menu {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; //
@@ -158,7 +157,7 @@ public class Menu {
                              default:
                                  interactionMenu();
                                  break;
-                         }
+                         } //hej
                          break;
 
                      case 2:
