@@ -36,11 +36,11 @@ public class Menu {
              while (mainMenu) {
                  //Choose which action to do with 1,2, 3 or 4.
                  System.out.println("Press 1 to create new DB entry \npress 2 to change an existing entry \npress 3 to remove an existing entry \npress 4 to print list of entries");
-                 int choice = console.nextInt();
+                 int choice = inputValidationInt(1,4);
                  switch (choice) {
                      case 1:
                          System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city\nPress 5 to return to menu");
-                         int choiceCreate = console.nextInt();
+                         int choiceCreate = inputValidationInt(1,5);
                          // ArrayList<String> objectCreation = new ArrayList<>();
                          // Temp ArrayList der indeholder de informationer vi bruger til at sende excecuteUpdate statements til DB
                          switch (choiceCreate) {
@@ -164,9 +164,8 @@ public class Menu {
                          // Case 2: changing existing information
                          // Kalder metoden 'updateChoiceMethod' der parameteroverfører 'updateChoise' fra linje 166 (hvad man ønsker at ændre)
                          // s = statement object, console = Scanner objekt
-                         //TODO updateObject;
                          System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.zips\n5.Return to menu");
-                         int updateChoice = console.nextInt();
+                         int updateChoice = inputValidationInt(1,5);
                          updateChoiceMethod(updateChoice,s,console);
                          break;
                      case 3:
@@ -176,7 +175,7 @@ public class Menu {
                          // Case 4: udprinter et ResultSet object ud fra given printf statements
                          // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
                          System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities\n5.Return to menu");
-                         int printChoise = console.nextInt();
+                         int printChoise = inputValidationInt(1,5);
                          switch (printChoise){
                              case 1: // Udprintning af customers table
                                  printCustomers(s);
@@ -226,7 +225,7 @@ public class Menu {
 
     private static void removeEntry(Statement s, Scanner console) throws SQLException {
         System.out.println("What information do you want to remove?\n1.Customer\n2.Car\n3.Contract\n4.Return to menu");
-        int removeChoice = console.nextInt();
+        int removeChoice = inputValidationInt(1,4);
         String areYouSure;
         switch (removeChoice){
             case 1: // Customer
@@ -298,7 +297,7 @@ public class Menu {
                         "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
                 String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
                         "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
-                int cu = console.nextInt()-1;
+                int cu = inputValidationInt(1,9)-1;
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String cuNew = console.nextLine();
@@ -333,7 +332,7 @@ public class Menu {
                 String[] carTemp = {"car_reg_number","car_type","car_brand","car_model",
                         "car_cruise_control","car_auto_gear","car_hp","car_seat_material","car_seat_number","car_ac","car_ccm","car_fuel_type"
                 ,"car_reg_number","car_odometer"};
-                int car = console.nextInt()-1;
+                int car = inputValidationInt(1,10)-1;
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String carNew = console.nextLine();
@@ -358,7 +357,7 @@ public class Menu {
                 System.out.println("What information do you wish to change in the contract? Input number");
                 System.out.println("1# contract end date\n 2# max km");
                 String[] conTemp = {"contract_to_date","contract_max_km"};
-                int conCount = console.nextInt()-1;
+                int conCount = inputValidationInt(1,2)-1;
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String conNew = console.nextLine();
@@ -434,5 +433,15 @@ public class Menu {
                 System.out.printf("customer zipcode: %-10s\n\n", rsCu.getString("zip_code"));
             }
         }
+    }
+
+    private static int inputValidationInt(int min,int max) {
+        Scanner console = new Scanner(System.in);
+        int value = console.nextInt(); //Takes input from user via console
+        while(value > max || value < min){ // checks that the input is in the required range. If not it enter loop
+            System.out.println("Invalid input, please try again");
+            value = console.nextInt();
+        }
+        return value;
     }
 }
