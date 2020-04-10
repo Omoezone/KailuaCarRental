@@ -399,10 +399,14 @@ public class Menu {
                 printSet = s.executeQuery("SELECT * FROM "+table[printChoice-1]+" WHERE "+column[printChoice-1][inputI]+" = '"+searchCriteriaS+"'");
             }
             if(printSet != null) {
+                boolean check = true;
                 while (printSet.next()) {
                     for (int i = 0; i < column[printChoice - 1].length; i++) {
                         System.out.printf("%-30s: %s\n", column[printChoice - 1][i], printSet.getString("" + column[printChoice - 1][i] + ""));
                     }
+                    check = false;
+                }if(check){
+                    System.out.println("No info found");
                 }
             }
         }
