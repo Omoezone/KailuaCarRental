@@ -25,7 +25,7 @@ public class Menu {
              s = con.createStatement();
              s2 = con.createStatement();
 
-             // ArrayLists til at indeholde midlertidlig data
+             // ArrayLists til at indeholde midlertidlig data, der bliver brugt under kreation delen.
              ArrayList<String> cusList = new ArrayList<>();
              ArrayList<String> carList = new ArrayList<>();
              ArrayList<String> conList = new ArrayList<>();
@@ -36,7 +36,7 @@ public class Menu {
              while (mainMenu) {
                  //Choose which action to do with 1,2, 3 or 4.
                  System.out.println("Press 1 to create new DB entry \npress 2 to change an existing entry \npress 3 to remove an existing entry \npress 4 to print list of entries");
-                 int choice = inputValidationInt(1,4);
+                 int choice = inputValidationInt(1,4); // validere at int værdi er mellem 1 og 4 inkluderet 1 = min 4 = max
                  switch (choice) {
                      case 1:
                          System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city\nPress 5 to return to menu");
@@ -55,7 +55,7 @@ public class Menu {
                                  for (int i = 1; i < 11; i++) {
                                      System.out.println(customerPrompts[0]);
                                      System.out.println(customerPrompts[i]);
-                                     cusList.add(console.next());
+                                     cusList.add(console.nextLine());
                                  }
                                  // Creates zips rows med try catch, for at sikre at zip ikke allerede findes.
                                  try {
@@ -196,7 +196,7 @@ public class Menu {
                          break;
                  }
 
-                 console.nextLine(); //Æder escapeSequence
+                 //console.nextLine(); Æder escapeSequence
                  System.out.println("Return to main menu? y/n");
                  String answer = console.nextLine();
                  if (answer.equalsIgnoreCase("n")) {
@@ -210,7 +210,7 @@ public class Menu {
          }
          catch(SQLException sqlex) {
             try{
-                System.out.println(sqlex.getMessage()); //TODO Ved vi hvad getMessage() findes ?
+                System.out.println(sqlex.getMessage());
                 con.close();
                 System.exit(1);  // terminate program
             }
@@ -281,7 +281,7 @@ public class Menu {
         }
     }
 
-    public static void updateChoiceMethod(int updateChoise, Statement s,Scanner console) throws SQLException{
+    public static void updateChoiceMethod(int updateChoise, Statement s,Scanner console) throws SQLException{ //updaterer data ud fra valgte tables data
         switch(updateChoise){
             case 1: //Customers
                 System.out.println("Who do you want to change?");
@@ -372,7 +372,7 @@ public class Menu {
         }
     }
 
-    private static void printCities(Statement s) throws SQLException {
+    private static void printCities(Statement s) throws SQLException { // printer info om data der befinder sig i zips table
         ResultSet rsZip = s.executeQuery("SELECT zip_code,zip_city FROM zips");
         if(rsZip != null){//Checker at der er data i zips table, ud fra ovenstående SELECT statement
             while(rsZip.next()){//Går zips tables ResultSet igennem, et 'row' af gangen
@@ -382,7 +382,7 @@ public class Menu {
         }
     }
 
-    private static void printContracts(Statement s) throws SQLException {
+    private static void printContracts(Statement s) throws SQLException { //printer info om data der befinder sig i contracts table
         ResultSet rsCon = s.executeQuery("SELECT contract_id,customer_id,contract_to_date,contract_from_date,contract_max_km,car_reg_number FROM contracts");
         if(rsCon != null){//Checker at der er data i contracts table, ud fra ovenstående SELECT statement
             while(rsCon.next()){ //Går contracts tables ResultSet igennem, et 'row' af gangen
@@ -395,7 +395,7 @@ public class Menu {
         }
     }
 
-    private static void printCars(Statement s) throws SQLException {
+    private static void printCars(Statement s) throws SQLException { // Printer info om data der befinder sig i cars table
         ResultSet rsCar = s.executeQuery("SELECT car_reg_number,car_type,car_brand,car_model,car_cruise_control,car_auto_gear,car_hp," +
                 "car_seat_material,car_seat_number,car_ac,car_ccm,car_fuel_type,car_reg_date,car_odometer FROM cars");
         if(rsCar != null){ //Checker at der er data i cars table, ud fra ovenstående SELECT statement
@@ -417,14 +417,15 @@ public class Menu {
         }
     }
 
-    private static void printCustomers(Statement s) throws SQLException {
+    private static void printCustomers(Statement s) throws SQLException { // printer info om data der befinder sig i customers table
         ResultSet rsCu = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name,customer_address,customer_license_number, " +
                 "customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code FROM customers");
         if(rsCu != null) { //Checker at der er data i customers table, ud fra ovenstående SELECT statement
             while (rsCu.next()) { //Går customer tables ResultSet igennem, et 'row' af gangen
+                //TODO Find ud af hvorfor den printer mærkeligt ved customer address
                 System.out.printf("customer id: %-32s", rsCu.getString("customer_id"));
                 System.out.printf("customer name: %s %-23s", rsCu.getString("customer_first_name"), rsCu.getString("customer_last_name"));
-                System.out.printf("customer address: %-10s\n", rsCu.getString("customer_address"));
+                System.out.printf("customer address: %s\n", rsCu.getString("customer_address"));
                 System.out.printf("customer license number: %-20s", rsCu.getString("customer_license_number"));
                 System.out.printf("customer mobile phone: %-20s", rsCu.getString("customer_mobile_phone"));
                 System.out.printf("customer phone: %-10s\n", rsCu.getString("customer_phone"));
