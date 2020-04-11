@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-public class Print {
-    public static void specific(Statement s, Scanner console) throws SQLException {
+public class Print { // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
+    public static void entryMenu(Statement s, Scanner console) throws SQLException {
         ResultSet printSet;
         System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities\n5.Return to menu");
         int printChoice = Menu.inputValidationInt(1, 5);
@@ -31,35 +31,43 @@ public class Print {
                     break;
             }
         }else{
-            String[] table = {"customers","cars","contracts","zips"};
-            String[][] column = {{"customer_id","customer_first_name","customer_last_name","customer_address","customer_license_number",
-                    "customer_mobile_phone","customer_phone","customer_email","customer_driver_since_date","zip_code"},{"car_reg_number","car_type","car_brand","car_model","car_cruise_control","car_auto_gear","car_hp",
-                    "car_seat_material","car_seat_number","car_ac","car_ccm","car_fuel_type","car_reg_date","car_odometer"},{"contract_id","customer_id","contract_to_date","contract_from_date","contract_max_km","car_reg_number"},{"zip_code","zip_city"}};
-            System.out.println("Select which criteria to use:");
-            for(int i = 0; i < column[printChoice-1].length;i++){
-                System.out.println(i+1+". "+column[printChoice-1][i]);
-            }
-            int inputI = Menu.inputValidationInt(1,column[printChoice-1].length)-1;
-            System.out.println("Input search word");
-            //inputI.equals(column[0][0]) || inputI == column[0][4] || column[0][9] || column[1][4] || column[1][5] || column[1][6] || column[1][8] || column[1][9] || column[1][10] || column[1][12]
-            if((printChoice-1 == 0 && inputI == 0)||(printChoice-1 == 0 && inputI == 9)||(printChoice-1 == 1 && inputI == 4)||(printChoice-1 == 1 && inputI == 5)||(printChoice-1 == 1 && inputI == 6)||(printChoice-1 == 1 && inputI == 8)||(printChoice-1 == 1 && inputI == 9)||(printChoice-1 == 1 && inputI == 10)||
-                    (printChoice-1 == 1 && inputI == 13)||(printChoice-1 == 2 && inputI == 0)||(printChoice-1 == 2 && inputI == 1)||(printChoice-1 == 2 && inputI == 4)||(printChoice-1 == 3 && inputI == 0)){
-                int searchCriteriaI = console.nextInt();
-                printSet = s.executeQuery("SELECT * FROM "+table[printChoice-1]+" WHERE "+column[printChoice-1][inputI]+" = "+searchCriteriaI+"");
-            }else {
-                String searchCriteriaS = console.nextLine();
-                printSet = s.executeQuery("SELECT * FROM "+table[printChoice-1]+" WHERE "+column[printChoice-1][inputI]+" = '"+searchCriteriaS+"'");
-            }
-            if(printSet != null) {
-                boolean check = true;
-                while (printSet.next()) {
-                    for (int i = 0; i < column[printChoice - 1].length; i++) {
-                        System.out.printf("%-30s: %s\n", column[printChoice - 1][i], printSet.getString("" + column[printChoice - 1][i] + ""));
-                    }
-                    check = false;
-                }if(check){
-                    System.out.println("No info found");
+            specific(s, console, printChoice);
+        }
+    }
+
+    private static void specific(Statement s, Scanner console, int printChoice) throws SQLException {
+        ResultSet printSet;
+        String[] table = {"customers","cars","contracts","zips"};
+        String[][] column = {{"customer_id","customer_first_name","customer_last_name","customer_address","customer_license_number",
+                "customer_mobile_phone","customer_phone","customer_email","customer_driver_since_date","zip_code"},{"car_reg_number","car_type","car_brand","car_model","car_cruise_control","car_auto_gear","car_hp",
+                "car_seat_material","car_seat_number","car_ac","car_ccm","car_fuel_type","car_reg_date","car_odometer"},{"contract_id","customer_id","contract_to_date","contract_from_date","contract_max_km","car_reg_number"},{"zip_code","zip_city"}};
+
+        System.out.println("Select which criteria to use:");
+        for(int i = 0; i < column[printChoice-1].length;i++){
+            System.out.println(i+1+". "+column[printChoice-1][i]);
+        }
+
+        int inputI = Menu.inputValidationInt(1,column[printChoice-1].length)-1;
+
+        System.out.println("Input search word");
+        if((printChoice-1 == 0 && inputI == 0)||(printChoice-1 == 0 && inputI == 9)||(printChoice-1 == 1 && inputI == 4)||(printChoice-1 == 1 && inputI == 5)||(printChoice-1 == 1 && inputI == 6)||(printChoice-1 == 1 && inputI == 8)||(printChoice-1 == 1 && inputI == 9)||(printChoice-1 == 1 && inputI == 10)||
+                (printChoice-1 == 1 && inputI == 13)||(printChoice-1 == 2 && inputI == 0)||(printChoice-1 == 2 && inputI == 1)||(printChoice-1 == 2 && inputI == 4)||(printChoice-1 == 3 && inputI == 0)){
+            int searchCriteriaI = console.nextInt();
+            printSet = s.executeQuery("SELECT * FROM "+table[printChoice-1]+" WHERE "+column[printChoice-1][inputI]+" = "+searchCriteriaI+"");
+        }else {
+            String searchCriteriaS = console.nextLine();
+            printSet = s.executeQuery("SELECT * FROM "+table[printChoice-1]+" WHERE "+column[printChoice-1][inputI]+" = '"+searchCriteriaS+"'");
+        }
+
+        if(printSet != null) {
+            boolean check = true;
+            while (printSet.next()) {
+                for (int i = 0; i < column[printChoice - 1].length; i++) {
+                    System.out.printf("%-30s: %s\n", column[printChoice - 1][i], printSet.getString("" + column[printChoice - 1][i] + ""));
                 }
+                check = false;
+            }if(check){
+                System.out.println("No info found");
             }
         }
     }
