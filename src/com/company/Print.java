@@ -44,7 +44,7 @@ public class Print { // Hver case i denne del, består af et excecuteQuery der v
 
         System.out.println("Select which criteria to use:");
         for(int i = 0; i < column[printChoice-1].length;i++){
-            System.out.println(i+1+". "+column[printChoice-1][i]);
+            System.out.println(i+1+". "+column[printChoice-1][i].replace("_"," "));
         }
 
         int inputI = Menu.inputValidationInt(1,column[printChoice-1].length)-1;
@@ -61,10 +61,18 @@ public class Print { // Hver case i denne del, består af et excecuteQuery der v
 
         if(printSet != null) {
             boolean check = true;
+            String tableMinusS;
             while (printSet.next()) {
                 for (int i = 0; i < column[printChoice - 1].length; i++) {
-                    System.out.printf("%-30s: %s\n", column[printChoice - 1][i], printSet.getString("" + column[printChoice - 1][i] + ""));
+                    if(table[printChoice-1].equalsIgnoreCase("customers")) {
+                        tableMinusS = table[printChoice - 1].replace("customers", "customer");
+                    }else{
+                        tableMinusS = table[printChoice - 1].replace("s", "");
+                    }
+                    String colNew = column[printChoice - 1][i].replace(tableMinusS+"_", "");
+                    System.out.printf("%-20s: %s\n", colNew.replace("_"," "), printSet.getString("" + column[printChoice - 1][i] + ""));
                 }
+                System.out.println();
                 check = false;
             }if(check){
                 System.out.println("No info found");

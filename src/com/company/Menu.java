@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; //
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; // drivers lokation i Intellij - connecter java fil med MySQL
     static final String DATABASE_URL = "jdbc:mysql://localhost:3306/kailua"; // url for vores DB på localhost
-    static Connection con;
+    static Connection con; // Connection object som sørger for forbindelse
 
     public static void interactionMenu()throws SQLException{
         Scanner console = new Scanner(System.in);
@@ -19,17 +19,11 @@ public class Menu {
              Class.forName(JDBC_DRIVER);
 
              // Connection statement der bruger vores final string URL og vores password til DB.
-             con = DriverManager.getConnection(DATABASE_URL, "root", "Williamjean12");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "X7913bz1h11");
 
              // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
              s = con.createStatement();
              s2 = con.createStatement();
-
-             // ArrayLists til at indeholde midlertidlig data, der bliver brugt under kreation delen.
-             ArrayList<String> cusList = new ArrayList<>();
-             ArrayList<String> carList = new ArrayList<>();
-             ArrayList<String> conList = new ArrayList<>();
-             ArrayList<String> zipList = new ArrayList<>();
 
              // loops while user inputs y
              boolean mainMenu = true;
@@ -39,7 +33,7 @@ public class Menu {
                  int choice = inputValidationInt(1,4); // validere at int værdi er mellem 1 og 4 inkluderet 1 = min 4 = max
                  switch (choice) {
                      case 1: // calls method that creates any of the entries
-                         createEntry(console, s, s2, cusList, carList, conList, zipList);
+                         createEntry(console, s, s2);
                          break;
                      case 2: // calls method that changes any given row in DB
                          updateChoiceMethod(s,console);
@@ -79,7 +73,13 @@ public class Menu {
         }
     }
 
-    private static void createEntry(Scanner console, Statement s, Statement s2, ArrayList<String> cusList, ArrayList<String> carList, ArrayList<String> conList, ArrayList<String> zipList) throws SQLException {
+    private static void createEntry(Scanner console, Statement s, Statement s2) throws SQLException {
+        // ArrayLists til at indeholde midlertidlig data, der bliver brugt under kreation delen.
+        ArrayList<String> cusList = new ArrayList<>();
+        ArrayList<String> carList = new ArrayList<>();
+        ArrayList<String> conList = new ArrayList<>();
+        ArrayList<String> zipList = new ArrayList<>();
+
         System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city\nPress 5 to return to menu");
         int choiceCreate = inputValidationInt(1,5);
         // ArrayList<String> objectCreation = new ArrayList<>();
