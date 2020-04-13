@@ -29,8 +29,8 @@ public class Menu {
              boolean mainMenu = true;
              while (mainMenu) {
                  //Choose which action to do with 1,2, 3 or 4.
-                 System.out.println("Press 1 to create new DB entry \npress 2 to change an existing entry \npress 3 to remove an existing entry \npress 4 to print list of entries");
-                 int choice = inputValidationInt(1,4); // validere at int værdi er mellem 1 og 4 inkluderet 1 = min 4 = max
+                 System.out.println("Press 1 to create new DB entry \nPress 2 to change an existing entry \nPress 3 to remove an existing entry \nPress 4 to print list of entries\nPress 5 to exit program");
+                 int choice = InputValidation.intRange(console, 1,5); // validere at int værdi er mellem 1 og 4 inkluderet 1 = min 4 = max
                  switch (choice) {
                      case 1: // calls method that creates any of the entries
                          createEntry(console, s, s2);
@@ -44,12 +44,13 @@ public class Menu {
                      case 4: // calls print method from Print class
                          Print.entryMenu(s,console);
                          break;
+                     case 5:
+                         System.out.println("You have chosen to exit.\nGoodbye");
+                         System.exit(1);
                  }
-
-                 //console.nextLine(); Æder escapeSequence
-                 System.out.println("Return to main menu? y/n");
-                 String answer = console.nextLine();
-                 if (answer.equalsIgnoreCase("n")) {
+                 System.out.println("Return to main menu? yes/no");
+                 String answer = InputValidation.chooseYesNo(console);
+                 if (answer.equalsIgnoreCase("no")) {
                      System.exit(1);
                      mainMenu = false;
                  }
@@ -81,9 +82,7 @@ public class Menu {
         ArrayList<String> zipList = new ArrayList<>();
 
         System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city\nPress 5 to return to menu");
-        int choiceCreate = inputValidationInt(1,5);
-        // ArrayList<String> objectCreation = new ArrayList<>();
-        // Temp ArrayList der indeholder de informationer vi bruger til at sende excecuteUpdate statements til DB
+        int choiceCreate = InputValidation.intRange(console,1,5);
         switch (choiceCreate) {
             /*
             case 1: Customer Creation
@@ -125,10 +124,9 @@ public class Menu {
                 */
                 ResultSet rsCars = s.executeQuery("SELECT car_reg_number,car_model FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)");
                 ResultSet rsCust = s2.executeQuery("SELECT customer_id,customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)");
-                // Hvis der findes useable (altså uden contract) entries i begge Resultsets, så skal bruger vælge en af hver for at
-                // skabe en ny contract.
+                // Hvis der findes useable (altså uden contract) entries i begge Resultsets, så skal bruger vælge en af hver for at skabe en ny contract.
                 if(rsCars.next() && rsCust.next()){
-                    String[] contractPrompt = {"Input the following information","choose customer by id number","contract start date","contract end date","Max km by contract","choose car by registration number"};
+                    String[] contractPrompt = {"Input the following information","choose customer by id number","contract start date (YYYY-MM-DD)","contract end date (YYYY-MM-DD)","Max km by contract","choose car by registration number"};
                     for (int h = 1; h < contractPrompt.length; h++) {
                         System.out.println(contractPrompt[0]);
                         System.out.println(contractPrompt[h]+"\n");
@@ -164,11 +162,20 @@ public class Menu {
             bruger bliver promptet til at indtaste information om bilen, som bliver added til en temp arraylist som derefter
             bliver brugt som 'parametre' til SQL statement, som skaber den nye bil i vores database*/
             case 3:
-                String[] carPrompts = {"Input the following information for the car: ","Registration number","Type","Brand","Model","cruise control","automatic gear?","Horse Power","Seat Material","Number of seats","Air Condition?","CCM","Fuel Type","Registration date","Odometer"};
+                String[] carPrompts = {"Input the following information for the car: ","Registration number","Type","Brand","Model","cruise control?","automatic gear?","Horse Power","Seat Material","Number of seats","Air Condition?","CCM","Fuel Type","Registration date (YYYY-MM-DD)","Odometer"};
                 for (int j = 1; j < carPrompts.length; j++) {
                     System.out.println(carPrompts[0]);
                     System.out.println(carPrompts[j]);
-                    carList.add(console.next());
+                    if(j == 5 || j == 6 || j == 10){
+                        System.out.println("Please enter yes/no");
+                        if(InputValidation.chooseYesNo(console).equalsIgnoreCase("yes")){
+                            carList.add("1");
+                        }else{
+                            carList.add("0");
+                        }
+                    }else {
+                        carList.add(console.next());
+                    }
                 }
                 // Det næste statement tager information der er blivet besvaret i sout prompt i forloopet foroven,
                 // og sætter det ind i et sql statement, der matcher de forventede værdier.
@@ -199,16 +206,16 @@ public class Menu {
 
     private static void removeEntry(Statement s, Scanner console) throws SQLException {
         System.out.println("What information do you want to remove?\n1.Customer\n2.Car\n3.Contract\n4.Return to menu");
-        int removeChoice = inputValidationInt(1,4);
+        int removeChoice = InputValidation.intRange(console,1,4);
         String areYouSure;
         switch (removeChoice){
             case 1: // Customer
                 Print.customers(s);
                 System.out.println("Which customer do you want to remove? Please enter ID nr");
                 int removeChoiceCus = console.nextInt();
-                System.out.println("Are you sure? y/n");
-                areYouSure = console.next();
-                if(areYouSure.equalsIgnoreCase("n")){
+                System.out.println("Are you sure? yes/no");
+                areYouSure = InputValidation.chooseYesNo(console);
+                if(areYouSure.equalsIgnoreCase("no")){
                     removeEntry(s, console);
                 }else{
                     if((s.executeQuery("SELECT customer_id FROM contracts WHERE customer_id = "+removeChoiceCus))!= null) {
@@ -224,9 +231,9 @@ public class Menu {
                 Print.cars(s);
                 System.out.println("Which car do you want to remove? Please enter registration number");
                 String removeChoiceCar = console.next().toUpperCase();
-                System.out.println("Are you sure? y/n");
-                areYouSure = console.next();
-                if(areYouSure.equalsIgnoreCase("n")){
+                System.out.println("Are you sure? yes/no");
+                areYouSure = InputValidation.chooseYesNo(console);
+                if(areYouSure.equalsIgnoreCase("no")){
                     removeEntry(s, console);
                 }else{
                     if((s.executeQuery("SELECT car_reg_number FROM contracts WHERE car_reg_number = '"+removeChoiceCar+"'"))!= null) {
@@ -241,9 +248,9 @@ public class Menu {
                 Print.contracts(s);
                 System.out.println("Which contract do you want to remove? Please enter ID nr");
                 int removeChoiceCon = console.nextInt();
-                System.out.println("Are you sure? y/n");
-                areYouSure = console.next();
-                if(areYouSure.equalsIgnoreCase("n")){
+                System.out.println("Are you sure? yes/no");
+                areYouSure = InputValidation.chooseYesNo(console);
+                if(areYouSure.equalsIgnoreCase("no")){
                     removeEntry(s, console);
                 }else{
                     s.executeUpdate("DELETE FROM contracts WHERE contract_id = " + removeChoiceCon);
@@ -257,7 +264,7 @@ public class Menu {
 
     public static void updateChoiceMethod(Statement s,Scanner console) throws SQLException{ //updaterer data ud fra valgte tables data
         System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.zips\n5.Return to menu");
-        int updateChoice = inputValidationInt(1,5);
+        int updateChoice = InputValidation.intRange(console, 1,5);
         switch(updateChoice){
             case 1: //Customers
                 System.out.println("Who do you want to change?");
@@ -273,7 +280,7 @@ public class Menu {
                         "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
                 String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
                         "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
-                int cu = inputValidationInt(1,9)-1;
+                int cu = InputValidation.intRange(console,1,9)-1;
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String cuNew = console.nextLine();
@@ -308,7 +315,7 @@ public class Menu {
                 String[] carTemp = {"car_reg_number","car_type","car_brand","car_model",
                         "car_cruise_control","car_auto_gear","car_hp","car_seat_material","car_seat_number","car_ac","car_ccm","car_fuel_type"
                 ,"car_reg_number","car_odometer"};
-                int car = inputValidationInt(1,10)-1;
+                int car = InputValidation.intRange(console, 1,10)-1;
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String carNew = console.nextLine();
@@ -333,7 +340,7 @@ public class Menu {
                 System.out.println("What information do you wish to change in the contract? Input number");
                 System.out.println("1# contract end date\n 2# max km");
                 String[] conTemp = {"contract_to_date","contract_max_km"};
-                int conCount = inputValidationInt(1,2)-1;
+                int conCount = InputValidation.intRange(console,1,2)-1;
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String conNew = console.nextLine();
@@ -346,15 +353,5 @@ public class Menu {
                 interactionMenu();
                 break;
         }
-    }
-
-    public static int inputValidationInt(int min,int max) {
-        Scanner console = new Scanner(System.in);
-        int value = console.nextInt(); //Takes input from user via console
-        while(value > max || value < min){ // checks that the input is in the required range. If not it enter loop
-            System.out.println("Invalid input, please try again");
-            value = console.nextInt();
-        }
-        return value;
     }
 }

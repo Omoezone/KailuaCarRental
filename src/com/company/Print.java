@@ -9,9 +9,9 @@ public class Print { // Hver case i denne del, består af et excecuteQuery der v
     public static void entryMenu(Statement s, Scanner console) throws SQLException {
         ResultSet printSet;
         System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities\n5.Return to menu");
-        int printChoice = Menu.inputValidationInt(1, 5);
+        int printChoice = InputValidation.intRange(console,1, 5);
         System.out.println("What do you wish to print?\n1.All info\n2.Specific info");
-        int printChoiceSpec = Menu.inputValidationInt(1,2);
+        int printChoiceSpec = InputValidation.intRange(console, 1,2);
         if (printChoiceSpec == 1) {
             switch (printChoice) {
                 case 1: // Udprintning af customers table
@@ -47,7 +47,7 @@ public class Print { // Hver case i denne del, består af et excecuteQuery der v
             System.out.println(i+1+". "+column[printChoice-1][i].replace("_"," "));
         }
 
-        int inputI = Menu.inputValidationInt(1,column[printChoice-1].length)-1;
+        int inputI = InputValidation.intRange(console,1,column[printChoice-1].length)-1;
 
         System.out.println("Input search word");
         if((printChoice-1 == 0 && inputI == 0)||(printChoice-1 == 0 && inputI == 9)||(printChoice-1 == 1 && inputI == 4)||(printChoice-1 == 1 && inputI == 5)||(printChoice-1 == 1 && inputI == 6)||(printChoice-1 == 1 && inputI == 8)||(printChoice-1 == 1 && inputI == 9)||(printChoice-1 == 1 && inputI == 10)||
@@ -75,7 +75,7 @@ public class Print { // Hver case i denne del, består af et excecuteQuery der v
                 System.out.println();
                 check = false;
             }if(check){
-                System.out.println("No info found");
+                System.out.println("No info found.\nPlease try searching for something else");
             }
         }
     }
