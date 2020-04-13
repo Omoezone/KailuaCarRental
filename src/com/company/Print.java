@@ -8,9 +8,9 @@ import java.util.Scanner;
 public class Print { // Hver case i denne del, består af et excecuteQuery der ved hjælp af printF statements, udprinter en given table
     public static void entryMenu(Statement s, Scanner console) throws SQLException {
         ResultSet printSet;
-        System.out.println("Which information do you want to print?\n1.Customers\n2.Cars\n3.Contracts\n4.Cities\n5.Return to menu");
+        System.out.println("Which information do you want to print?\n1. Customers\n2. Cars\n3. Contracts\n4. Cities\n5. Return to menu");
         int printChoice = InputValidation.intRange(console,1, 5);
-        System.out.println("What do you wish to print?\n1.All info\n2.Specific info");
+        System.out.println("What do you wish to print?\n1. All info\n2. Specific info");
         int printChoiceSpec = InputValidation.intRange(console, 1,2);
         if (printChoiceSpec == 1) {
             switch (printChoice) {
@@ -87,8 +87,8 @@ public class Print { // Hver case i denne del, består af et excecuteQuery der v
             while (rsCu.next()) { //Går customer tables ResultSet igennem, et 'row' af gangen
                 //TODO Find ud af hvorfor den printer mærkeligt ved customer address
                 System.out.printf("customer id: %-32s", rsCu.getString("customer_id"));
-                System.out.printf("customer name: %s %-23s", rsCu.getString("customer_first_name"), rsCu.getString("customer_last_name"));
-                System.out.printf("customer address: %s\n", rsCu.getString("customer_address"));
+                System.out.printf("customer name: %-28s", rsCu.getString("customer_first_name")+" "+rsCu.getString("customer_last_name"));
+                System.out.printf("customer address: %-10s\n", rsCu.getString("customer_address"));
                 System.out.printf("customer license number: %-20s", rsCu.getString("customer_license_number"));
                 System.out.printf("customer mobile phone: %-20s", rsCu.getString("customer_mobile_phone"));
                 System.out.printf("customer phone: %-10s\n", rsCu.getString("customer_phone"));
@@ -139,7 +139,7 @@ public class Print { // Hver case i denne del, består af et excecuteQuery der v
         if(rsZip != null){//Checker at der er data i zips table, ud fra ovenstående SELECT statement
             while(rsZip.next()){//Går zips tables ResultSet igennem, et 'row' af gangen
                 System.out.printf("Zip code: %-12s",rsZip.getString("zip_code"));
-                System.out.printf("City for zip code: %s\n\n",rsZip.getString("zip_city"));
+                System.out.printf("City: %s\n\n",rsZip.getString("zip_city"));
             }
         }
     }
