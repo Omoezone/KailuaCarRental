@@ -5,22 +5,29 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; // drivers lokation i Intellij - connecter java fil med MySQL
+    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver"; // drivers lokation i Intellij - connecter java fil med MySQL
     static final String DATABASE_URL = "jdbc:mysql://localhost:3306/kailua"; // url for vores DB på localhost
-    static Connection con; // Connection object som sørger for forbindelse
+    static Connection con; // Connection object(interface), der indeholder de relevante metoder, til at skabe en "connection" til den givende database. Eks "getConnection" metod
 
     public static void interactionMenu()throws SQLException{
         Scanner console = new Scanner(System.in);
-         try {
+         try { //Et try/catch der sikre at SQLExceptions bliver håndteret på den rigtige måde, hvis disse sker
+
              // DB connection statements
              con = null;
+             // Initialisere 2 statement objekter, der er nødvendige for at kunne lave og returnere data til og fra MySQL databaser(Disse har endnu ikke fået en connection til DB)
              Statement s = null;
              Statement s2 = null;
-             Class.forName(JDBC_DRIVER);
+             Class.forName(JDBC_DRIVER); //Initialises JDBC_DRIVER via kald til metode "forName".
 
-             // Connection statement der bruger vores final string URL og vores password til DB.
-             con = DriverManager.getConnection(DATABASE_URL, "root", "X7913bz1h11");
+             /* Connection statement der bruger vores final string URL og vores password til DB.
+                DriverManager, bruger dertil getConnection metoden, fra "Connection" interfaces, der i starten bliver initialiseret som "con"
+                DATABASE_URL er et "database URL", der bliver brugt til at connecte til den specifike database, initialiseret i starten af klassen
+                Dertil skal der bruges brugeren til databasen og den brugers adgangskode for at få adgang til DB
+             */
+             con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
 
+             // De allerede initialiseret statements, bliver givet "connection" til den givende database, sat via DriverManager
              // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
              s = con.createStatement();
              s2 = con.createStatement();
