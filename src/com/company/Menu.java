@@ -29,7 +29,7 @@ public class Menu {
              boolean mainMenu = true;
              while (mainMenu) {
                  //Choose which action to do with 1,2, 3 or 4.
-                 System.out.println("Press 1 to create new DB entry \nPress 2 to change an existing entry \nPress 3 to remove an existing entry \nPress 4 to print list of entries\nPress 5 to exit program");
+                 System.out.println("1. Create new DB entry \n2. Change an existing entry \n3. Remove an existing entry \n4. Print list of entries\n5. Exit program");
                  int choice = InputValidation.intRange(console, 1,5); // validere at int værdi er mellem 1 og 4 inkluderet 1 = min 4 = max
                  switch (choice) {
                      case 1: // calls method that creates any of the entries
@@ -81,7 +81,7 @@ public class Menu {
         ArrayList<String> conList = new ArrayList<>();
         ArrayList<String> zipList = new ArrayList<>();
 
-        System.out.println("Press 1 for new customer \nPress 2 for new contract \nPress 3 for new car \nPress 4 for new city\nPress 5 to return to menu");
+        System.out.println("1. New customer \n2. New contract \n3. New car \n4. New city\n5. Return to menu");
         int choiceCreate = InputValidation.intRange(console,1,5);
         switch (choiceCreate) {
             /*
@@ -263,8 +263,8 @@ public class Menu {
     }
 
     public static void updateChoiceMethod(Statement s,Scanner console) throws SQLException{ //updaterer data ud fra valgte tables data
-        System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.zips\n5.Return to menu");
-        int updateChoice = InputValidation.intRange(console, 1,5);
+        System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.Return to menu");
+        int updateChoice = InputValidation.intRange(console, 1,4);
         switch(updateChoice){
             case 1: //Customers
                 System.out.println("Who do you want to change?");
@@ -277,7 +277,7 @@ public class Menu {
                 int cuInt = console.nextInt();
                 System.out.println("What information do you wish to change in customer? Input number");
                 System.out.println("1# customer first name\n2# customer last name\n3# customer address\n4# customer license number\n" +
-                        "5# customer mobile number\n6# customer phone number\n7# customer email\n 8# Customer driver since date\n 9# zip code");
+                        "5# customer mobile number\n6# customer phone number\n7# customer email\n8# Customer driver since date\n9# zip code");
                 String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
                         "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
                 int cu = InputValidation.intRange(console,1,9)-1;
@@ -303,14 +303,14 @@ public class Menu {
                 if(carSet != null){
                     while(carSet.next()){
                         System.out.printf("Car registration number: %-10s Car type: %-10s\n", carSet.getString("car_reg_number"),carSet.getString("car_type"));
-                        System.out.printf("Car brand: %-10s Car model : %-10s\n\n", carSet.getString("car_brand"),carSet.getString("car_model"));
+                        System.out.printf("Car brand: %-24s Car model : %-10s\n\n", carSet.getString("car_brand"),carSet.getString("car_model"));
                     }
                 }
                 console.nextLine();
                 String carReg = console.nextLine().toUpperCase();
                 System.out.println("What information do you wish to change in car? Input number");
                 System.out.println("1# car registration number \n2# car type\n3# car brand\n4# car model\n" +
-                        "5# car cruise control \n6# automatic \n7# horsepower \n 8# seat material \n 9# number of seats \n 10# air condition"
+                        "5# car cruise control \n6# automatic \n7# horsepower \n8# seat material \n9# number of seats \n10# air condition\n"
                         + "11# ccm \n12# fuel type \n13# registration date \n14# odometer");
                 String[] carTemp = {"car_reg_number","car_type","car_brand","car_model",
                         "car_cruise_control","car_auto_gear","car_hp","car_seat_material","car_seat_number","car_ac","car_ccm","car_fuel_type"
@@ -331,14 +331,14 @@ public class Menu {
                 ResultSet conSet = s.executeQuery("SELECT contract_id, customers.customer_id, customer_first_name, customer_last_name, car_reg_number FROM contracts JOIN customers ON contracts.customer_id = customers.customer_id ORDER BY contract_id");
                 if(conSet != null){
                     while(conSet.next()){
-                        System.out.printf("Contract id: %-10s Customer id: %-10s\n", conSet.getString("contract_id"),conSet.getString("customer_id"));
-                        System.out.printf("customer name: %-4s %-10s Car registration number : %s \n\n", conSet.getString("customer_first_name"),conSet.getString("customer_last_name"),conSet.getString("car_reg_number"));
+                        System.out.printf("Contract id: %-19s Customer id: %-10s\n", conSet.getString("contract_id"),conSet.getString("customer_id"));
+                        System.out.printf("Customer name: %-17s Car registration number : %s \n\n", conSet.getString("customer_first_name")+" "+conSet.getString("customer_last_name"),conSet.getString("car_reg_number"));
                     }
                 }
                 console.nextLine();
                 int conReg = console.nextInt();
                 System.out.println("What information do you wish to change in the contract? Input number");
-                System.out.println("1# contract end date\n 2# max km");
+                System.out.println("1# contract end date\n2# max km");
                 String[] conTemp = {"contract_to_date","contract_max_km"};
                 int conCount = InputValidation.intRange(console,1,2)-1;
                 System.out.println("What should the new info be?");
