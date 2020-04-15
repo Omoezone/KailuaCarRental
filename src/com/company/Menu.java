@@ -210,21 +210,26 @@ public class Menu {
                 break;
         }
     }
-
+    /*I denne metode giver vi muligheden for at slette en customer, contract og car fra vores data base
+    *Før der bliver valgt en givende række fra en tabel, printer vi først alle rækkerne fra tabellen.
+    *Derefter vælger man en række/entry ved at indtaste det givende PRIMARY KEY
+    * Når vi sletter en customer, sørger vi også for at slette den contract som bruger det customer id
+    * hvis der er en. Det samme gælder for cars
+    * Det er vigtigt fordi man kan ikke slette en række, hvis PRIMARY KEY, bliver brugt et andet sted*/
     private static void removeEntry(Statement s, Scanner console) throws SQLException {
         System.out.println("What information do you want to remove?\n1.Customer\n2.Car\n3.Contract\n4.Return to menu");
         int removeChoice = InputValidation.intRange(console,1,4);
         String areYouSure;
-        switch (removeChoice){
+        switch (removeChoice){ // en switch som deler mulighederne for customer, car og contract
             case 1: // Customer
                 Print.customers(s);
                 System.out.println("Which customer do you want to remove? Please enter ID nr");
                 int removeChoiceCus = console.nextInt();
-                System.out.println("Are you sure? yes/no");
+                System.out.println("Are you sure? yes/no"); // vi laver et tjek om man er sikker på at man vil slette rækken.
                 areYouSure = InputValidation.chooseYesNo(console);
-                if(areYouSure.equalsIgnoreCase("no")){
+                if(areYouSure.equalsIgnoreCase("no")){ //hvis man vælger at skrive "no" køre metoden forfra igen
                     removeEntry(s, console);
-                }else{
+                }else{ // hvis man siger "yes" tjekker den om customer id matcher nogle fra contract tabellen og sletter contracten først
                     if((s.executeQuery("SELECT customer_id FROM contracts WHERE customer_id = "+removeChoiceCus))!= null) {
                         s.executeUpdate("DELETE FROM contracts WHERE customer_id = " + removeChoiceCus);
                         s.executeUpdate("DELETE FROM customers WHERE customer_id = " + removeChoiceCus);
@@ -239,7 +244,7 @@ public class Menu {
                 System.out.println("Which car do you want to remove? Please enter registration number");
                 String removeChoiceCar = console.next().toUpperCase();
                 System.out.println("Are you sure? yes/no");
-                areYouSure = InputValidation.chooseYesNo(console);
+                areYouSure = InputValidation.chooseYesNo(console); // vi kalder en inputvaliderings metode for at være sikker på at brugeren kun skriver "no" eller "yes"
                 if(areYouSure.equalsIgnoreCase("no")){
                     removeEntry(s, console);
                 }else{
@@ -251,6 +256,8 @@ public class Menu {
                     }
                 }
                 break;
+                /*Ved contracts behøver vi ikke tjekke om den valgte PRIMARY KEY bliver brugt andre steder end i contact tabellen
+                * fordi contracts kan godt blive slettet uden at påvirke andre tabeller*/
             case 3: // Contract
                 Print.contracts(s);
                 System.out.println("Which contract do you want to remove? Please enter ID nr");
@@ -263,7 +270,7 @@ public class Menu {
                     s.executeUpdate("DELETE FROM contracts WHERE contract_id = " + removeChoiceCon);
                 }
                 break;
-            default:
+            default: // en default case til switchen som kører menuen forfra og tager programmet tilbage til start
                 interactionMenu();
                 break;
         }
