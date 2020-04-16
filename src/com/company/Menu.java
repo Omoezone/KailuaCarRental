@@ -25,7 +25,7 @@ public class Menu {
                 DATABASE_URL er et "database URL", der bliver brugt til at connecte til den specifike database, initialiseret i starten af klassen
                 Dertil skal der bruges brugeren til databasen og den brugers adgangskode for at få adgang til DB
              */
-             con = DriverManager.getConnection(DATABASE_URL, "root", "X7913bz1h11");
+             con = DriverManager.getConnection(DATABASE_URL, "root", "Omoezone12");
 
              // De allerede initialiseret statements, bliver givet "connection" til den givende database, sat via DriverManager
              // vi skaber to Statements, fordi vi i vores contract creation skal bruge to Resultsets åbne på samme tid.
