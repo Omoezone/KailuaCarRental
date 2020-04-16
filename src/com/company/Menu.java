@@ -97,23 +97,26 @@ public class Menu {
             Informationen om customers zip code og city bliver først indsat i DB med try/catch statement der sørger for at
             det ikke allerede er information der er i zip code table. Derefter sættes resten informationen ind i DB.
             */
-            case 1: // Customer
+            case 1:
                 String[] customerPrompts = {"Input the following information: ","First name?", "Last name?", "Address?", "license Number", "Mobile number?", "Phone?", "Email?", "When did the driver start driving?","zip code","City"};
                 for (int i = 1; i < 11; i++) {
                     System.out.println(customerPrompts[0]);
                     System.out.println(customerPrompts[i]);
-                    cusList.add(console.nextLine());
+                    cusList.add(console.nextLine()); // Customer arraylist
                 }
                 // Creates zips rows med try catch, for at sikre at zip ikke allerede findes.
                 try {
+                    // opdatere zips table, med input fra bruger, hvis zip findes ryger den i try catch, ellers opdateres den.
                     s.executeUpdate("INSERT INTO zips VALUES('" + Integer.parseInt(cusList.get(8)) + "','" + cusList.get(9) + "')");
                 }catch(SQLException zipExist){
                     System.out.println("Zip code does already exist in the zip table");
                 }
-                // Creates customers table data
+                // opretter customer i customer table med valgt data
                 s.executeUpdate("INSERT INTO customers(customer_first_name,customer_last_name,customer_address,customer_license_number,customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code) VALUES ('"+ cusList.get(0)+"','"+cusList.get(1)+"','"+cusList.get(2)+"','"+cusList.get(3)+"','"+cusList.get(4)+"','"+cusList.get(5)+"','"+cusList.get(6)+"','"+cusList.get(7)+"','"+Integer.parseInt(cusList.get(8))+"')");
+                // nulstiller arraylist, så den ikke tilføjer bagpå
                 cusList.clear();
                 break;
+
             /*
             Case 2: Contract Creation
             først bliver der lavet to resultsets, som bliver tjekket med subqueries for om der der nogen "frie" biler og kunder.
@@ -121,39 +124,48 @@ public class Menu {
             om det er en car og/eler en customer, der mangler, skriver 'fejlmeddelselse' og beder brugeren om at vænne tilbage
             til hovedmenuen.
             */
-            case 2: // Contract
+
+            case 2:
                 /* Nødvendige FRIE data vi behøver for at kunne lave en contract er:
                    1. customer_id fra customer
                    2. car_reg_number fra cars
                    Altså skal der både være lavet et customers og cars data sæt, der ikke er koblet op på noget, for at vi vil kunne lave en kontrakt.
                 */
+                // vælger alle biler med reg nr og model, fra cars. hvor reg nr fra cars ikke findes i en kontrakt, altså alle ledige cars.
                 ResultSet rsCars = s.executeQuery("SELECT car_reg_number,car_model FROM cars c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.car_reg_number = con.car_reg_number)");
+                // vælger alle customers med id og fulde navn, fra customers hvor customer id ikke findes i en kontrakt, altså alle ledige customers.
                 ResultSet rsCust = s2.executeQuery("SELECT customer_id,customer_first_name, customer_last_name FROM   customers c WHERE  NOT EXISTS (SELECT * FROM   contracts con WHERE  c.customer_id = con.customer_id)");
-                // Hvis der findes useable (altså uden contract) entries i begge Resultsets, så skal bruger vælge en af hver for at skabe en ny contract.
+                // Hvis der er en next efterfølgende altså ledige biler og kunder, min 1 i hver går den ind og opretter en kontrakt med prompt fra brugeren.
                 if(rsCars.next() && rsCust.next()){
                     String[] contractPrompt = {"Input the following information","choose customer by id number","contract start date (YYYY-MM-DD)","contract end date (YYYY-MM-DD)","Max km by contract","choose car by registration number"};
                     for (int h = 1; h < contractPrompt.length; h++) {
                         System.out.println(contractPrompt[0]);
-                        System.out.println(contractPrompt[h]+"\n");
+                        // Hvis  h = 1 som er første felt, printer den customers med id og fulde navn som brugeren skal vælge id ud fra.
                         if(h == 1){
+                            // flytter pointeren i rs tilbage til første position, da den er hoppet frem  ved at tjekke rs.next.
                             rsCust.beforeFirst();
                             while(rsCust.next()) {
                                 System.out.printf("Customer id: %s\n", rsCust.getString("customer_id"));
                                 System.out.printf("Customer Name: %-4s %s\n\n",rsCust.getString("customer_first_name"),rsCust.getString("customer_last_name"));
                             }
                         }
+                        // Hvis h = 5 som er valg af bil, printer den alle biler der er ledige og prompter brugeren for reg nr.
                         if(h == 5){
+                            // flytter pointeren i rs tilbage til første position, da den er hoppet frem ved at tjekke rs.next.
                             rsCars.beforeFirst();
                             while(rsCars.next()){
                                 System.out.printf("Car registration number: %-4s \nModel: %s\n\n", rsCars.getString("car_reg_number"),rsCars.getString("car_model"));
                             }
                         }
+                        // tilføjer valg fra brugeren til arraylisten
                         conList.add(console.next());
                     }
-                    // Tænker at vi kan tage customer_id fra cusList og car_reg_number fra carList
+                    // Opretter kontrakt i contract table, med info fra arraylisten
                     s.executeUpdate("INSERT INTO contracts (customer_id,contract_to_date,contract_from_date,contract_max_km,car_reg_number) VALUES('"+conList.get(0)+"','"+conList.get(1)+"','"+conList.get(2)+"','"+conList.get(3)+"','"+conList.get(4)+"')");
+                    // nulstiller arraylisten så den er klar til nyt input
                     conList.clear();
-                // Hvis der mangler en bil og/eller kunde får man én af de følgende fejl.
+
+                    // Hvis der mangler en bil og/eller kunde får man én af de følgende fejl.
                 }else if(!(rsCars.next()) && !(rsCust.next())){
                     System.out.println("There is not a cars and customers available to create a contract.\nPlease return to menu.");
                 }else if(!(rsCars.next())){
@@ -166,13 +178,16 @@ public class Menu {
             /*case 3: Car creation
             bruger bliver promptet til at indtaste information om bilen, som bliver added til en temp arraylist som derefter
             bliver brugt som 'parametre' til SQL statement, som skaber den nye bil i vores database*/
-            case 3: // Car
+            case 3:
                 String[] carPrompts = {"Input the following information for the car: ","Registration number","Type","Brand","Model","cruise control?","automatic gear?","Horse Power","Seat Material","Number of seats","Air Condition?","CCM","Fuel Type","Registration date (YYYY-MM-DD)","Odometer"};
                 for (int j = 1; j < carPrompts.length; j++) {
                     System.out.println(carPrompts[0]);
                     System.out.println(carPrompts[j]);
+                    // Hvis j er en af de følgende værdier, bliver brugeren bedt om at skrive "yes" eller "no" da dette er et boolean udtryk,
+                    // men da vi bruger DB MySql, som bruger en tiny int som boolean hvor 0 er nej og alt over er ja sætter vi det selv ud fra brugerens ja eller nej
                     if(j == 5 || j == 6 || j == 10){
                         System.out.println("Please enter yes/no");
+                        // input validere at det er korrekt input
                         if(InputValidation.chooseYesNo(console).equalsIgnoreCase("yes")){
                             carList.add("1");
                         }else{
@@ -193,14 +208,18 @@ public class Menu {
             case 4: Zip Code/ City Creation
             Til at lave en separat zip kode uden en customer. De bliver lavet sammen med customer i case 1
             */
-            case 4: // Zip Code
-                String[] zipPrompts = {"Input the following information for the car: ","zip code","city"};
+            case 4:
+                String[] zipPrompts = {"Input the following information:","zip code","city"};
                 for (int k = 1; k < zipPrompts.length; k++) {
                     System.out.println(zipPrompts[0]);
                     System.out.println(zipPrompts[k]);
                     zipList.add(console.next());
                 }
-                s.executeUpdate("INSERT INTO zips VALUES ('"+zipList.get(0)+"','"+zipList.get(1)+"')");
+                try {
+                    s.executeUpdate("INSERT INTO zips VALUES ('"+zipList.get(0)+"','"+zipList.get(1)+"')");
+                }catch(SQLException zipExist){
+                    System.out.println("Zip code does already exist in the zip table");
+                }
                 zipList.clear();
                 break;
             default:
@@ -208,6 +227,7 @@ public class Menu {
                 break;
         }
     }
+
     /*I denne metode giver vi muligheden for at slette en customer, contract og car fra vores data base
     *Før der bliver valgt en givende række fra en tabel, printer vi først alle rækkerne fra tabellen.
     *Derefter vælger man en række/entry ved at indtaste det givende PRIMARY KEY
