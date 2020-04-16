@@ -97,7 +97,7 @@ public class Menu {
             Informationen om customers zip code og city bliver først indsat i DB med try/catch statement der sørger for at
             det ikke allerede er information der er i zip code table. Derefter sættes resten informationen ind i DB.
             */
-            case 1:
+            case 1: // Customer
                 String[] customerPrompts = {"Input the following information: ","First name?", "Last name?", "Address?", "license Number", "Mobile number?", "Phone?", "Email?", "When did the driver start driving?","zip code","City"};
                 for (int i = 1; i < 11; i++) {
                     System.out.println(customerPrompts[0]);
@@ -114,7 +114,6 @@ public class Menu {
                 s.executeUpdate("INSERT INTO customers(customer_first_name,customer_last_name,customer_address,customer_license_number,customer_mobile_phone,customer_phone,customer_email,customer_driver_since_date,zip_code) VALUES ('"+ cusList.get(0)+"','"+cusList.get(1)+"','"+cusList.get(2)+"','"+cusList.get(3)+"','"+cusList.get(4)+"','"+cusList.get(5)+"','"+cusList.get(6)+"','"+cusList.get(7)+"','"+Integer.parseInt(cusList.get(8))+"')");
                 cusList.clear();
                 break;
-
             /*
             Case 2: Contract Creation
             først bliver der lavet to resultsets, som bliver tjekket med subqueries for om der der nogen "frie" biler og kunder.
@@ -122,8 +121,7 @@ public class Menu {
             om det er en car og/eler en customer, der mangler, skriver 'fejlmeddelselse' og beder brugeren om at vænne tilbage
             til hovedmenuen.
             */
-
-            case 2:
+            case 2: // Contract
                 /* Nødvendige FRIE data vi behøver for at kunne lave en contract er:
                    1. customer_id fra customer
                    2. car_reg_number fra cars
@@ -168,7 +166,7 @@ public class Menu {
             /*case 3: Car creation
             bruger bliver promptet til at indtaste information om bilen, som bliver added til en temp arraylist som derefter
             bliver brugt som 'parametre' til SQL statement, som skaber den nye bil i vores database*/
-            case 3:
+            case 3: // Car
                 String[] carPrompts = {"Input the following information for the car: ","Registration number","Type","Brand","Model","cruise control?","automatic gear?","Horse Power","Seat Material","Number of seats","Air Condition?","CCM","Fuel Type","Registration date (YYYY-MM-DD)","Odometer"};
                 for (int j = 1; j < carPrompts.length; j++) {
                     System.out.println(carPrompts[0]);
@@ -195,7 +193,7 @@ public class Menu {
             case 4: Zip Code/ City Creation
             Til at lave en separat zip kode uden en customer. De bliver lavet sammen med customer i case 1
             */
-            case 4:
+            case 4: // Zip Code
                 String[] zipPrompts = {"Input the following information for the car: ","zip code","city"};
                 for (int k = 1; k < zipPrompts.length; k++) {
                     System.out.println(zipPrompts[0]);
@@ -276,14 +274,14 @@ public class Menu {
         }
     }
 
-    public static void updateChoiceMethod(Statement s,Scanner console) throws SQLException{ //updaterer data ud fra valgte tables data
+    public static void updateChoiceMethod(Statement s,Scanner console) throws SQLException{ // opdaterer data ud fra valgte tables data
         System.out.println("What information do you wish to change?\n1.Customer\n2.Cars\n3.Contract\n4.Return to menu");
         int updateChoice = InputValidation.intRange(console, 1,4);
         switch(updateChoice){
-            case 1: //Customers
+            case 1: // Customers
                 System.out.println("Who do you want to change?");
                 ResultSet cuSet = s.executeQuery("SELECT customer_id,customer_first_name,customer_last_name FROM customers ORDER BY customer_first_name");
-                if(cuSet != null){
+                if(cuSet != null){ // Tjekker om ResultSet er tomt og hvis ikke printer navnene og ID
                     while(cuSet.next()){
                         System.out.printf("Customer id: %-10s Customer name: %-4s %s\n", cuSet.getString("customer_id"),cuSet.getString("customer_first_name"),cuSet.getString("customer_last_name"));
                     }
@@ -294,11 +292,11 @@ public class Menu {
                         "5# customer mobile number\n6# customer phone number\n7# customer email\n8# Customer driver since date\n9# zip code");
                 String[] custTemp = {"customer_first_name","customer_last_name","customer_address","customer_license_number",
                         "customer_mobile_phone","customer_phone","customer_email","customer_drive_since_date","zip_code"};
-                int cu = InputValidation.intRange(console,1,9)-1;
+                int cu = InputValidation.intRange(console,1,9)-1; // bruger vælger fra valgene og bliver promptet for ny info
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String cuNew = console.nextLine();
-                if(cu == 8) {
+                if(cu == 8) { // Hvis det er en zip code bliver zip code lavet i try/catch for at undgå at den allerede findes
                     try {
                         System.out.println("What is the city that belongs to the zip code");
                         String newCity = console.nextLine();
@@ -314,7 +312,7 @@ public class Menu {
             case 2: //cars
                 System.out.println("Which car do you want to change?");
                 ResultSet carSet = s.executeQuery("SELECT car_reg_number,car_type,car_brand, car_model FROM cars ORDER BY car_reg_number");
-                if(carSet != null){
+                if(carSet != null){ // Printer alle biler, hvis ResultSet ikke er tomt
                     while(carSet.next()){
                         System.out.printf("Car registration number: %-10s Car type: %-10s\n", carSet.getString("car_reg_number"),carSet.getString("car_type"));
                         System.out.printf("Car brand: %-24s Car model : %-10s\n\n", carSet.getString("car_brand"),carSet.getString("car_model"));
@@ -329,11 +327,11 @@ public class Menu {
                 String[] carTemp = {"car_reg_number","car_type","car_brand","car_model",
                         "car_cruise_control","car_auto_gear","car_hp","car_seat_material","car_seat_number","car_ac","car_ccm","car_fuel_type"
                 ,"car_reg_number","car_odometer"};
-                int car = InputValidation.intRange(console, 1,10)-1;
+                int car = InputValidation.intRange(console, 1,10)-1; // Hvad vil du ændre - passer med string array som sættes ind nedenfor i update
                 System.out.println("What should the new info be?");
                 console.nextLine();
                 String carNew = console.nextLine();
-
+                // hvis det er en string værdi bruges update statement i if ellers bruges den i else da det så er en int værdi
                 if(car == 0 || car == 1 || car == 2|| car == 3 || car == 7 || car == 11){
                     s.executeUpdate("UPDATE cars SET " + carTemp[car] + " = '" + carNew + "' WHERE car_reg_number = '" + carReg + "'");
                 }else
@@ -341,9 +339,9 @@ public class Menu {
                 break;
 
             case 3: //contracts
-                System.out.println("Which contract do you want to change by contract id?");
+                System.out.println("Which contract do you want to change by contract id?"); // contract vælges ud fra contract id
                 ResultSet conSet = s.executeQuery("SELECT contract_id, customers.customer_id, customer_first_name, customer_last_name, car_reg_number FROM contracts JOIN customers ON contracts.customer_id = customers.customer_id ORDER BY contract_id");
-                if(conSet != null){
+                if(conSet != null){ // hvis ikke tom så printes result set
                     while(conSet.next()){
                         System.out.printf("Contract id: %-19s Customer id: %-10s\n", conSet.getString("contract_id"),conSet.getString("customer_id"));
                         System.out.printf("Customer name: %-17s Car registration number : %s \n\n", conSet.getString("customer_first_name")+" "+conSet.getString("customer_last_name"),conSet.getString("car_reg_number"));
